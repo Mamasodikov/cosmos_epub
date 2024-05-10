@@ -80,7 +80,14 @@ To open an EPUB file from a local storage, use the `openLocalBook` method:
         assetPath: 'assets/book.epub',
         context: context,
         // Book ID is required to save the progress for each opened book
-        bookId: '3');
+        bookId: '3'
+        // Callbacks are optional
+        onPageFlip: (int currentPage, int totalPages) {
+          print(currentPage);
+        },
+        onLastPage: (int lastPageIndex) {
+          print('We arrived to the last widget');
+        });
    ``` 
 
 For clearing theming cache, use this method:
