@@ -89,6 +89,7 @@ For clearing theming cache, use this method:
     await CosmosEpub.clearThemeCache();
   ```
 
+
 ***Note: I haven't handled all exceptions, so control it on your own side. For example, if you give same bookId to the another book, it can open page and chapter from that book's progress or may break 💀***
 
 ***Feel free to contact me if you have any questions: https://allmylinks.com/mamasodikov***
