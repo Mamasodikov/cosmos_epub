@@ -53,12 +53,12 @@ class ShowEpub extends StatefulWidget {
   final String chapterListTitle;
   final Function(int currentPage, int totalPages)? onPageFlip;
   final Function(int lastPageIndex)? onLastPage;
-  Color accentColor;
+  final Color accentColor;
 
   ShowEpub({
     super.key,
     required this.epubBook,
-    this.accentColor = Colors.indigoAccent,
+    required this.accentColor,
     this.starterChapter = 0,
     this.shouldOpenDrawer = false,
     required this.bookId,

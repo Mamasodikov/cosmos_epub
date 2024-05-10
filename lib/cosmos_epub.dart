@@ -23,6 +23,7 @@ class CosmosEpub {
       {required String localPath,
       required BuildContext context,
       required String bookId,
+      Color accentColor = Colors.indigoAccent,
       Function(int currentPage, int totalPages)? onPageFlip,
       Function(int lastPageIndex)? onLastPage,
       String chapterListTitle = 'Table of Contents',
@@ -41,12 +42,14 @@ class CosmosEpub {
         starterChapter: starterChapter,
         chapterListTitle: chapterListTitle,
         onPageFlip: onPageFlip,
-        onLastPage: onLastPage);
+        onLastPage: onLastPage,
+        accentColor: accentColor);
   }
 
   static Future<void> openAssetBook(
       {required String assetPath,
       required BuildContext context,
+      Color accentColor = Colors.indigoAccent,
       Function(int currentPage, int totalPages)? onPageFlip,
       Function(int lastPageIndex)? onLastPage,
       required String bookId,
@@ -67,7 +70,8 @@ class CosmosEpub {
         starterChapter: starterChapter,
         chapterListTitle: chapterListTitle,
         onPageFlip: onPageFlip,
-        onLastPage: onLastPage);
+        onLastPage: onLastPage,
+        accentColor: accentColor);
   }
 
   static _openBook(
@@ -75,6 +79,7 @@ class CosmosEpub {
       required EpubBook epubBook,
       required String bookId,
       required bool shouldOpenDrawer,
+      required Color accentColor,
       required int starterChapter,
       required String chapterListTitle,
       Function(int currentPage, int totalPages)? onPageFlip,
@@ -99,6 +104,7 @@ class CosmosEpub {
                   0,
           shouldOpenDrawer: shouldOpenDrawer,
           bookId: bookId,
+          accentColor: accentColor,
           chapterListTitle: chapterListTitle,
           onPageFlip: onPageFlip,
           onLastPage: onLastPage,
