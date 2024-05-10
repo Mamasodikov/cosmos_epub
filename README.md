@@ -41,6 +41,7 @@ Import the package in your Dart code:
 First things first, you have to `initialize` databases before using any other method. Kindly, do it earlier, preferably in the main.dart file.
 
 I used [Isar](https://isar.dev/) database to keep the progress. For more control over DB, read Isar docs. So i won't write it here ;)
+
 Isar CRUD docs: https://isar.dev/crud.html
 
 ```dart
