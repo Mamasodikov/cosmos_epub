@@ -5,7 +5,7 @@ The reader is **responsive**, enabling its use with both normal-sized smartphone
 
 ## Showcase
 
-![cosmos_reader](https://github.com/Mamasodikov/cosmos_epub/assets/64262986/7300e4ec-7bd3-45f7-a683-ee3f19230213)
+![cosmos_reader](https://github.com/Mamasodikov/cosmos_epub/assets/64262986/863d6cd4-6774-4893-934f-447088408f7e)
 
 ## Features
 
