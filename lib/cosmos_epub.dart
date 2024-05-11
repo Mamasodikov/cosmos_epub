@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cosmos_epub/Component/constants.dart';
 import 'package:cosmos_epub/Helpers/isar_service.dart';
 import 'package:cosmos_epub/Helpers/progress_singleton.dart';
+import 'package:cosmos_epub/Model/book_progress_model.dart';
 import 'package:cosmos_epub/show_epub.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
@@ -150,5 +151,25 @@ class CosmosEpub {
     } else {
       return false;
     }
+  }
+
+  static Future<bool> setCurrentPageIndex(String bookId, int index) async {
+    return await bookProgress.setCurrentPageIndex(bookId, index);
+  }
+
+  static Future<bool> setCurrentChapterIndex(String bookId, int index) async {
+    return await bookProgress.setCurrentChapterIndex(bookId, index);
+  }
+
+  static BookProgressModel getBookProgress(String bookId) {
+    return bookProgress.getBookProgress(bookId);
+  }
+
+  static Future<bool> deleteBookProgress(String bookId) async {
+    return await bookProgress.deleteBookProgress(bookId);
+  }
+
+  static Future<bool> deleteAllBooksProgress(String bookId) async {
+    return await bookProgress.deleteAllBooksProgress();
   }
 }

@@ -51,16 +51,15 @@ There are various methods to control over book progress DB too for your ease :)
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initializer returns a bool
+  // Initializer and methods return a bool [true - success, false - failure]
   var _initialized = await CosmosEpub.initialize();
-
-  // You can control database with singleton class member
+  
   if (_initialized) {
-    bookProgress.getBookProgress('bookId');
-    bookProgress.setCurrentPageIndex('bookId', 1);
-    bookProgress.setCurrentChapterIndex('bookId', 2);
-    bookProgress.deleteBookProgress('bookId');
-    bookProgress.deleteAllBooksProgress();
+    BookProgressModel bookProgress = CosmosEpub.getBookProgress('bookId');
+    await CosmosEpub.setCurrentPageIndex('bookId', 1);
+    await CosmosEpub.setCurrentChapterIndex('bookId', 2);
+    await CosmosEpub.deleteBookProgress('bookId');
+    await CosmosEpub.deleteAllBooksProgress();
   }
 
   runApp(MyApp());
