@@ -1,4 +1,3 @@
-import 'package:cosmos_epub/Model/book_progress_model.dart';
 import 'package:cosmos_epub/cosmos_epub.dart';
 import 'package:cosmos_epub/show_epub.dart';
 import 'package:flutter/cupertino.dart';
