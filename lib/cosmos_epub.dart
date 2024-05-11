@@ -169,7 +169,7 @@ class CosmosEpub {
     return await bookProgress.deleteBookProgress(bookId);
   }
 
-  static Future<bool> deleteAllBooksProgress(String bookId) async {
+  static Future<bool> deleteAllBooksProgress() async {
     return await bookProgress.deleteAllBooksProgress();
   }
 }
