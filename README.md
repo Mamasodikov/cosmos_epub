@@ -3,7 +3,12 @@
 **CosmosEpub** is a Flutter package that allows users to open and read **EPUB** files easily. It provides features like opening **EPUB** files from ***assets*** or ***local path***, changing themes, adjusting font styles and sizes, accessing chapter contents, and more.
 The reader is **responsive**, enabling its use with both normal-sized smartphones and tablets.
 
+## Showcase
+
+![cosmos_reader](https://github.com/Mamasodikov/cosmos_epub/assets/64262986/863d6cd4-6774-4893-934f-447088408f7e)
+
 ## Features
+
 
 - Open EPUB files from assets or local path.
 - Change themes with 5 options: Grey, Purple, White, Black, and Pink
