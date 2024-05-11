@@ -29,6 +29,7 @@ class CosmosEpub {
       String chapterListTitle = 'Table of Contents',
       bool shouldOpenDrawer = false,
       int starterChapter = -1}) async {
+
     ///TODO: Optimize with isolates
     var bytes = File(localPath).readAsBytesSync();
     EpubBook epubBook = await EpubReader.readBook(bytes.buffer.asUint8List());
@@ -56,6 +57,7 @@ class CosmosEpub {
       String chapterListTitle = 'Table of Contents',
       bool shouldOpenDrawer = false,
       int starterChapter = -1}) async {
+
     ///TODO: Optimize with isolates
 
     var bytes = await rootBundle.load(assetPath);
@@ -144,9 +146,9 @@ class CosmosEpub {
   static Future<bool> clearThemeCache() async {
     if (await GetStorage().initStorage) {
       var get = GetStorage();
-      await get.remove(LIB_THEME);
-      await get.remove(LIB_FONT);
-      await get.remove(LIB_FONT_SIZE);
+      await get.remove(libTheme);
+      await get.remove(libFont);
+      await get.remove(libFontSize);
       return true;
     } else {
       return false;

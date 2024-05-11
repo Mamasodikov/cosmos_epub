@@ -124,10 +124,10 @@ class ShowEpubState extends State<ShowEpub> {
   }
 
   loadThemeSettings() {
-    selectedFont = gs.read(LIB_FONT) ?? selectedFont;
-    var themeId = gs.read(LIB_THEME) ?? staticThemeId;
+    selectedFont = gs.read(libFont) ?? selectedFont;
+    var themeId = gs.read(libTheme) ?? staticThemeId;
     updateTheme(themeId, isInit: true);
-    _fontSize = gs.read(LIB_FONT_SIZE) ?? _fontSize;
+    _fontSize = gs.read(libFontSize) ?? _fontSize;
     _fontSizeProgress = _fontSize;
   }
 
@@ -399,7 +399,7 @@ class ShowEpubState extends State<ShowEpub> {
                                                       .first;
 
                                                   gs.write(
-                                                      LIB_FONT, selectedFont);
+                                                      libFont, selectedFont);
 
                                                   ///For updating inside
                                                   setState(() {});
@@ -461,7 +461,7 @@ class ShowEpubState extends State<ShowEpub> {
                                                 _fontSize = value;
 
                                                 gs.write(
-                                                    LIB_FONT_SIZE, _fontSize);
+                                                    libFontSize, _fontSize);
 
                                                 ///For updating outside
                                                 updateUI();
@@ -512,7 +512,7 @@ class ShowEpubState extends State<ShowEpub> {
       fontColor = Colors.black;
     }
 
-    gs.write(LIB_THEME, id);
+    gs.write(libTheme, id);
 
     if (!isInit) {
       Navigator.of(context).pop();

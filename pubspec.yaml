@@ -1,14 +1,12 @@
 name: cosmos_epub
 description: EPUB reader package with great UI, easy customization and awesome features
-version: 0.0.1+1
+version: 0.0.1+2
 
 homepage: https://github.com/Mamasodikov/cosmos_epub
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
   flutter: ">=1.17.0"
-
-isar_version: &isar_version ^3.1.0+1
 
 dependencies:
   flutter:

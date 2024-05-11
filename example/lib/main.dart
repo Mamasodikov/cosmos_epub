@@ -1,21 +1,21 @@
+import 'package:cosmos_epub/Model/book_progress_model.dart';
 import 'package:cosmos_epub/cosmos_epub.dart';
-import 'package:cosmos_epub/show_epub.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initializer returns a bool
+  // Initializer and methods return a bool [true - success, false - failure]
   var _initialized = await CosmosEpub.initialize();
 
-  // You can control database with singleton class member
   if (_initialized) {
-    bookProgress.getBookProgress('bookId');
-    bookProgress.setCurrentPageIndex('bookId', 1);
-    bookProgress.setCurrentChapterIndex('bookId', 2);
-    bookProgress.deleteBookProgress('bookId');
-    bookProgress.deleteAllBooksProgress();
+    // Use BookProgressModel model instance anywhere in your app to access current book progress of specific book
+    BookProgressModel bookProgress = CosmosEpub.getBookProgress('bookId');
+    await CosmosEpub.setCurrentPageIndex('bookId', 1);
+    await CosmosEpub.setCurrentChapterIndex('bookId', 2);
+    await CosmosEpub.deleteBookProgress('bookId');
+    await CosmosEpub.deleteAllBooksProgress();
   }
 
   runApp(MyApp());
