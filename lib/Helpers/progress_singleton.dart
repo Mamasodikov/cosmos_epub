@@ -84,11 +84,13 @@ class BookProgressSingleton {
 
   Future<bool> deleteBookProgress(String bookId) async {
     try {
-      await isar.bookProgressModels
-          .where()
-          .filter()
-          .bookIdEqualTo(bookId)
-          .deleteAll();
+      await isar.writeTxn(() async {
+        await isar.bookProgressModels
+            .where()
+            .filter()
+            .bookIdEqualTo(bookId)
+            .deleteAll();
+      });
       return true;
     } on Exception {
       return false;
@@ -97,7 +99,9 @@ class BookProgressSingleton {
 
   Future<bool> deleteAllBooksProgress() async {
     try {
-      await isar.bookProgressModels.where().deleteAll();
+      await isar.writeTxn(() async {
+        await isar.bookProgressModels.where().deleteAll();
+      });
       return true;
     } on Exception {
       return false;
