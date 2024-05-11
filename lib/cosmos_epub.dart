@@ -99,7 +99,7 @@ class CosmosEpub {
           starterChapter: starterChapter >= 0
               ? starterChapter
               : bookProgress
-                      .getBookProgress(bookId ?? '')
+                      .getBookProgress(bookId)
                       .currentChapterIndex ??
                   0,
           shouldOpenDrawer: shouldOpenDrawer,

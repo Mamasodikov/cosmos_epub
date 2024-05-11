@@ -652,10 +652,11 @@ class ShowEpubState extends State<ShowEpub> {
                                           widget.onLastPage!(index);
                                         }
 
-                                        if (totalPages > 1)
+                                        if (totalPages > 1) {
                                           lastSwipe++;
-                                        else
+                                        } else {
                                           lastSwipe = 2;
+                                        }
 
                                         if (lastSwipe > 1) {
                                           nextChapter();
@@ -783,7 +784,7 @@ class ShowEpubState extends State<ShowEpub> {
                             Expanded(
                               flex: 10,
                               child: Text(
-                                chaptersList.length > 0
+                                chaptersList.isNotEmpty
                                     ? chaptersList[bookProgress
                                                 .getBookProgress(bookId)
                                                 .currentChapterIndex ??

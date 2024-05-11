@@ -184,12 +184,11 @@ class _PagingWidgetState extends State<PagingWidget> {
                           if (s != null && s == "a") {
                             if (s.contains("chapter")) {
                               setState(() {
-                                var s1 = s.split("-0");
-                                String break1 =
-                                    s1.toList().last.split(".xhtml").first;
-                                int number = int.parse(break1);
-
                                 ///Write logic for goto chapter
+                                // var s1 = s.split("-0");
+                                // String break1 =
+                                //     s1.toList().last.split(".xhtml").first;
+                                // int number = int.parse(break1);
                               });
                             }
                           }
