@@ -86,7 +86,7 @@ To open an EPUB file from a local storage, use the `openLocalBook` method:
 
    ```dart
     await CosmosEpub.openLocalBook(
-        assetPath: 'assets/book.epub',
+        localPath: book.path,
         context: context,
         // Book ID is required to save the progress for each opened book
         bookId: '3'
