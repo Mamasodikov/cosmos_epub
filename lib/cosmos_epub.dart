@@ -125,13 +125,13 @@ class CosmosEpub {
     });
   }
 
-  static Future<Isar> initialize() async {
+  static Future<bool> initialize() async {
     await ScreenUtil.ensureScreenSize();
     await GetStorage.init();
     var isar = await IsarService.buildIsarService();
     bookProgress = BookProgressSingleton(isar: isar);
     _initialized = true;
-    return isar;
+    return true;
   }
 
   static _checkInitialization() {

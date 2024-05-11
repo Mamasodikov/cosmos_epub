@@ -40,19 +40,23 @@ Import the package in your Dart code:
    ```  
 First things first, you have to `initialize` databases before using any other method. Kindly, do it earlier, preferably in the main.dart file.
 
-I used [Isar](https://isar.dev/) database to keep the progress. For more control over DB, read Isar docs. So i won't write it here ;)
-
-Isar CRUD docs: https://isar.dev/crud.html
+There are various methods to control over book progress DB too for your ease :)
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var instance = await CosmosEpub.initialize();
 
-// Initializer returns an instance to control over book progress DB.
-  await instance.writeTxn(() async {
-    instance.bookProgressModels.clear();
-  });
+  // Initializer returns a bool
+  var _initialized = await CosmosEpub.initialize();
+
+  // You can control database with singleton class member
+  if (_initialized) {
+    bookProgress.getBookProgress('bookId');
+    bookProgress.setCurrentPageIndex('bookId', 1);
+    bookProgress.setCurrentChapterIndex('bookId', 2);
+    bookProgress.deleteBookProgress('bookId');
+    bookProgress.deleteAllBooksProgress();
+  }
 
   runApp(MyApp());
 }
