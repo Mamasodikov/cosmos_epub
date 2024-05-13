@@ -51,7 +51,7 @@ There are various methods to control over book progress DB too for your ease :)
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initializer and methods return a bool [true - success, false - failure]
+  // Initializer and methods return a bool
   var _initialized = await CosmosEpub.initialize();
   
   if (_initialized) {

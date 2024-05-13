@@ -273,13 +273,10 @@ class ShowEpubState extends State<ShowEpub> {
         clipBehavior: Clip.antiAlias,
         backgroundColor: backColor,
         enableDrag: true,
-        // shape: const OutlineInputBorder(
-        //   borderSide: BorderSide.none,
-        // ),
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0))),
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r))),
         builder: (context) {
           return SingleChildScrollView(
               child: StatefulBuilder(
