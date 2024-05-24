@@ -585,6 +585,12 @@ class ShowEpubState extends State<ShowEpub> {
 
                                       widget.shouldOpenDrawer = false;
                                     }
+
+                                    var currentChapterIndex = bookProgress
+                                            .getBookProgress(bookId)
+                                            .currentChapterIndex ??
+                                        0;
+
                                     return PagingWidget(
                                       textContent,
                                       innerHtmlContent,
@@ -663,11 +669,9 @@ class ShowEpubState extends State<ShowEpub> {
 
                                         updateUI();
                                       },
-                                      chapterTitle: chaptersList[bookProgress
-                                                  .getBookProgress(bookId)
-                                                  .currentChapterIndex ??
-                                              0]
-                                          .chapter,
+                                      chapterTitle:
+                                          chaptersList[currentChapterIndex]
+                                              .chapter,
                                       totalChapters: chaptersList.length,
                                     );
                                   }
