@@ -25,6 +25,9 @@ dependencies:
   fading_edge_scrollview: ^3.0.0
   path_provider: ^2.1.3
 
+  #Experiment
+  #hyphenatorx: ^1.5.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

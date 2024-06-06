@@ -155,7 +155,7 @@ class _PagingWidgetState extends State<PagingWidget> {
 
         currentPageStartIndex = currentPageEndIndex;
         currentPageBottom =
-            top + pageSize.height - (innerHtml != null ? 200.h : 100.h);
+            top + pageSize.height - (innerHtml != null ? 200.h : 150.h);
       }
     }));
 
@@ -199,6 +199,7 @@ class _PagingWidgetState extends State<PagingWidget> {
                     : Text(
                         text,
                         // Assuming _isPaging and _currentIndex are handled elsewhere
+                        textAlign: TextAlign.justify,
                         style: widget.style,
                         overflow: TextOverflow.visible,
                       ),
