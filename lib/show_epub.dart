@@ -225,6 +225,8 @@ class ShowEpubState extends State<ShowEpub> {
 
     if (isHTML(textContent)) {
       innerHtmlContent = textContent;
+    } else {
+      textContent = textContent.replaceAll('Unknown', '').trim();
     }
     controllerPaging.paginate();
 
