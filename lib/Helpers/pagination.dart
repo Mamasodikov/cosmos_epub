@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:hyphenatorx/widget/texthyphenated.dart';
 
 class PagingTextHandler {
   final Function paginate;
@@ -68,7 +69,7 @@ class _PagingWidgetState extends State<PagingWidget> {
     super.initState();
   }
 
-  rePaginate() {
+  rePaginate() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() {
@@ -155,7 +156,7 @@ class _PagingWidgetState extends State<PagingWidget> {
 
         currentPageStartIndex = currentPageEndIndex;
         currentPageBottom =
-            top + pageSize.height - (innerHtml != null ? 200.h : 100.h);
+            top + pageSize.height - (innerHtml != null ? 200.h : 140.h);
       }
     }));
 
@@ -169,41 +170,32 @@ class _PagingWidgetState extends State<PagingWidget> {
         onTap: widget.onTextTap,
         child: Container(
           color: widget.style.backgroundColor,
-          child: FadingEdgeScrollView.fromSingleChildScrollView(
-            gradientFractionOnEnd: 0.2,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: 40.h, top: 60.h, left: 10.w, right: 10.w),
-                child: widget.innerHtmlContent != null
-                    ? HtmlWidget(
-                        text,
-                        onTapUrl: (String? s) async {
-                          if (s != null && s == "a") {
-                            if (s.contains("chapter")) {
-                              setState(() {
-                                ///Write logic for goto chapter
-                                // var s1 = s.split("-0");
-                                // String break1 =
-                                //     s1.toList().last.split(".xhtml").first;
-                                // int number = int.parse(break1);
-                              });
-                            }
-                          }
-                          return true;
-                        },
-                        textStyle: widget.style,
-                      )
-                    : Text(
-                        text,
-                        // Assuming _isPaging and _currentIndex are handled elsewhere
-                        style: widget.style,
-                        overflow: TextOverflow.visible,
-                      ),
-              ),
-            ),
+          child: Padding(
+            padding: EdgeInsets.only(top: 60.h, left: 10.w, right: 10.w),
+            child: widget.innerHtmlContent != null
+                ? HtmlWidget(
+                    text,
+                    onTapUrl: (String? s) async {
+                      if (s != null && s == "a") {
+                        if (s.contains("chapter")) {
+                          setState(() {
+                            ///Write logic for goto chapter
+                            // var s1 = s.split("-0");
+                            // String break1 =
+                            //     s1.toList().last.split(".xhtml").first;
+                            // int number = int.parse(break1);
+                          });
+                        }
+                      }
+                      return true;
+                    },
+                    textStyle: widget.style,
+                  )
+                : Text(
+                    '$text →',
+                    textAlign: TextAlign.justify,
+                    style: widget.style,
+                  ),
           ),
         ),
       );
