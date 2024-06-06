@@ -165,7 +165,6 @@ class _PagingWidgetState extends State<PagingWidget> {
 
     // Assuming each operation within the loop is asynchronous and returns a Future
     List<Future<Widget>> futures = _pageTexts.map((text) async {
-      final _scrollController = ScrollController();
       return InkWell(
         onTap: widget.onTextTap,
         child: Container(
