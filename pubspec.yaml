@@ -22,7 +22,7 @@ dependencies:
   html: ^0.15.4
   flutter_widget_from_html: ^0.14.11
   flutter_widget_from_html_core: ^0.14.12
-  fading_edge_scrollview: ^3.0.0
+  fading_edge_scrollview: ^4.1.1
   path_provider: ^2.1.3
 
   #Experiment
