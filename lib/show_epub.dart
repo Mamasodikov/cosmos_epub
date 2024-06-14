@@ -12,16 +12,21 @@ import 'Component/circle_button.dart';
 import 'Component/theme_colors.dart';
 import 'Helpers/chapters.dart';
 import 'Helpers/custom_toast.dart';
+import 'Helpers/functions.dart';
 import 'Helpers/pagination.dart';
 import 'Helpers/progress_singleton.dart';
 import 'Model/chapter_model.dart';
+
+///TODO: Change Future to more controllable timer to control show/hide elements
+///BUG-1: https://github.com/Mamasodikov/cosmos_epub/issues/2
+///Add sub chapters support
 
 late BookProgressSingleton bookProgress;
 
 const double DESIGN_WIDTH = 375;
 const double DESIGN_HEIGHT = 812;
 
-String selectedFont = 'Segoe';
+String selectedFont = 'Bookerly';
 List<String> fontNames = [
   "Segoe",
   "Alegreya",
@@ -76,6 +81,7 @@ class ShowEpubState extends State<ShowEpub> {
   String? innerHtmlContent;
   String textContent = '';
   bool showBrightnessWidget = false;
+  bool showCounter = true;
   final controller = ScrollController();
   Future<void> loadChapterFuture = Future.value(true);
   List<LocalChapterModel> chaptersList = [];
@@ -101,34 +107,60 @@ class ShowEpubState extends State<ShowEpub> {
   bool showNext = false;
   var dropDownFontItems;
 
+  int totalPages = 0;
+  int currentPage = 1;
+
   GetStorage gs = GetStorage();
 
   PagingTextHandler controllerPaging = PagingTextHandler(paginate: () {});
 
   @override
   void initState() {
-    loadThemeSettings();
-
     bookId = widget.bookId;
     epubBook = widget.epubBook;
+
     // allFonts = GoogleFonts.asMap().cast<String, String>();
     // fontNames = allFonts.keys.toList();
     // selectedTextStyle = GoogleFonts.getFont(selectedFont).fontFamily!;
     selectedTextStyle =
         fontNames.where((element) => element == selectedFont).first;
 
+    loadThemeSettings();
     getTitleFromXhtml();
     reLoadChapter(init: true);
 
     super.initState();
   }
 
-  loadThemeSettings() {
+  loadThemeSettings() async {
     selectedFont = gs.read(libFont) ?? selectedFont;
     var themeId = gs.read(libTheme) ?? staticThemeId;
     updateTheme(themeId, isInit: true);
     _fontSize = gs.read(libFontSize) ?? _fontSize;
     _fontSizeProgress = _fontSize;
+
+    ///Total pages count
+
+    currentPage =
+        (bookProgress.getBookProgress(bookId).currentPageIndex ?? 0) + 1;
+
+    ///Hide counter
+    await Future.delayed(const Duration(seconds: 3));
+    showCounter = false;
+
+    updateUI();
+  }
+
+  showAndHideCounter() async {
+    if (showCounter == false) {
+      showCounter = true;
+      updateUI();
+
+      ///Hide counter
+      await Future.delayed(const Duration(seconds: 3));
+      showCounter = false;
+      updateUI();
+    }
   }
 
   getTitleFromXhtml() {
@@ -221,22 +253,23 @@ class ShowEpubState extends State<ShowEpub> {
     }));
 
     htmlContent = content;
-    textContent = parse(htmlContent).documentElement!.text;
 
-    if (isHTML(textContent)) {
-      innerHtmlContent = textContent;
-    } else {
-      textContent = textContent.replaceAll('Unknown', '').trim();
+    ///Experiment
+    // final parser = HtmlParser();
+    // var node = parser.parse(htmlContent);
+    // textContent = replaceParagraphsWithTab(node);
+
+    textContent = parse(htmlContent).documentElement!.text;
+    if(isHTML(textContent)){
+      textContent = htmlToText(textContent ?? '');
+      textContent = textToHtml(textContent ?? '');
     }
+
+    textContent = textContent.replaceAll('Unknown', '').trim();
+
     controllerPaging.paginate();
 
     setupNavButtons();
-  }
-
-  bool isHTML(String str) {
-    final RegExp htmlRegExp =
-        RegExp('<[^>]*>', multiLine: true, caseSensitive: false);
-    return htmlRegExp.hasMatch(str);
   }
 
   setupNavButtons() {
@@ -387,9 +420,12 @@ class ShowEpubState extends State<ShowEpub> {
                                                 value: selectedFont,
                                                 isExpanded: true,
                                                 menuMaxHeight: 400.h,
+                                                icon: const Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    color: Colors.grey),
                                                 onChanged: (newValue) {
                                                   selectedFont =
-                                                      newValue ?? 'Segoe';
+                                                      newValue ?? 'Bookerly';
 
                                                   selectedTextStyle = fontNames
                                                       .where((element) =>
@@ -522,12 +558,15 @@ class ShowEpubState extends State<ShowEpub> {
 
   ///Update widget tree
   updateUI() {
+    if (!mounted) return;
     setState(() {});
   }
 
   nextChapter() async {
     ///Set page to initial
     await bookProgress.setCurrentPageIndex(bookId, 0);
+    currentPage = 1;
+    showAndHideCounter();
 
     var index = bookProgress.getBookProgress(bookId).currentChapterIndex ?? 0;
 
@@ -539,6 +578,8 @@ class ShowEpubState extends State<ShowEpub> {
   prevChapter() async {
     ///Set page to initial
     await bookProgress.setCurrentPageIndex(bookId, 0);
+    currentPage = 1;
+    showAndHideCounter();
 
     var index = bookProgress.getBookProgress(bookId).currentChapterIndex ?? 0;
 
@@ -609,8 +650,15 @@ class ShowEpubState extends State<ShowEpub> {
                                           fontFamily: selectedTextStyle,
                                           package: 'cosmos_epub',
                                           color: fontColor),
-                                      handlerCallback: (ctrl) {
+                                      handlerCallback: (ctrl, totalPages) {
                                         controllerPaging = ctrl;
+
+                                        this.totalPages = totalPages;
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((d) {
+                                          updateUI();
+                                        });
+                                        // print('Total pages: $totalPages');
                                       },
                                       onTextTap: () {
                                         if (showHeader) {
@@ -621,6 +669,8 @@ class ShowEpubState extends State<ShowEpub> {
                                         updateUI();
                                       },
                                       onPageFlip: (currentPage, totalPages) {
+
+                                        showAndHideCounter();
                                         if (widget.onPageFlip != null) {
                                           widget.onPageFlip!(
                                               currentPage, totalPages);
@@ -636,8 +686,6 @@ class ShowEpubState extends State<ShowEpub> {
 
                                         if (isLastPage) {
                                           showHeader = true;
-                                        } else {
-                                          lastSwipe = 0;
                                         }
 
                                         isLastPage = false;
@@ -662,9 +710,19 @@ class ShowEpubState extends State<ShowEpub> {
                                         } else {
                                           lastSwipe = 2;
                                         }
+                                        var currentChapter = (bookProgress
+                                                    .getBookProgress(bookId)
+                                                    .currentChapterIndex ??
+                                                0) +
+                                            1;
 
-                                        if (lastSwipe > 1) {
-                                          nextChapter();
+                                        ///Last page & last chapter
+                                        if (!(chaptersList.length ==
+                                            currentChapter)) {
+                                          if (lastSwipe > 1) {
+                                            nextChapter();
+                                            lastSwipe = 0;
+                                          }
                                         }
 
                                         isLastPage = true;
@@ -750,7 +808,7 @@ class ShowEpubState extends State<ShowEpub> {
                       ],
                     )),
                     AnimatedContainer(
-                      height: showHeader ? 40.h : 0,
+                      height: showHeader ? 50.h : 0,
                       duration: const Duration(milliseconds: 100),
                       color: backColor,
                       child: Container(
@@ -897,6 +955,46 @@ class ShowEpubState extends State<ShowEpub> {
                     ),
                   ),
                 ),
+                Visibility(
+                  visible: showCounter,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 60.h),
+                      child: Container(
+                        // height: 40.h,
+                        // width: 60.w,
+                        decoration: BoxDecoration(
+                            color: widget.accentColor.withAlpha(220),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.r))),
+
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 5.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Bo'lim: $currentPage / ",
+                                textAlign: TextAlign.center,
+                              ),
+                              totalPages == 0
+                                  ? CupertinoActivityIndicator(
+                                      radius: 7.r,
+                                    )
+                                  : Text(
+                                      '$totalPages',
+                                      textAlign: TextAlign.center,
+                                    ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

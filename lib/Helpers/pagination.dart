@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:cosmos_epub/PageFlip/page_flip_widget.dart';
-import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:hyphenatorx/widget/texthyphenated.dart';
+
+import 'functions.dart';
 
 class PagingTextHandler {
   final Function paginate;
@@ -17,7 +17,6 @@ class PagingTextHandler {
 
 class PagingWidget extends StatefulWidget {
   final String textContent;
-  final String? innerHtmlContent;
   final String chapterTitle;
   final int totalChapters;
   final int starterPageIndex;
@@ -29,14 +28,13 @@ class PagingWidget extends StatefulWidget {
   final Widget? lastWidget;
 
   const PagingWidget(
-    this.textContent,
-    this.innerHtmlContent, {
+    this.textContent, {
     super.key,
     this.style = const TextStyle(
       color: Colors.black,
       fontSize: 30,
     ),
-    required this.handlerCallback(PagingTextHandler handler),
+    required this.handlerCallback(PagingTextHandler handler, int totalPages),
     required this.onTextTap,
     required this.onPageFlip,
     required this.onLastPage,
@@ -54,7 +52,7 @@ class _PagingWidgetState extends State<PagingWidget> {
   final List<String> _pageTexts = [];
   List<Widget> pages = [];
   int _currentPageIndex = 0;
-  Future<void> paginateFuture = Future.value(true);
+  Future<int> paginateFuture = Future.value(0);
   late RenderBox _initializedRenderBox;
   Widget? lastWidget;
 
@@ -65,7 +63,7 @@ class _PagingWidgetState extends State<PagingWidget> {
   void initState() {
     rePaginate();
     var handler = PagingTextHandler(paginate: rePaginate);
-    widget.handlerCallback(handler); // callback call.
+    widget.handlerCallback(handler, 0); // callback call.
     super.initState();
   }
 
@@ -96,7 +94,7 @@ class _PagingWidgetState extends State<PagingWidget> {
     }
   }
 
-  Future<void> _paginate() async {
+  Future<int> _paginate() async {
     final pageSize = _initializedRenderBox.size;
 
     _pageTexts.clear();
@@ -117,7 +115,7 @@ class _PagingWidgetState extends State<PagingWidget> {
 
     // https://medium.com/swlh/flutter-line-metrics-fd98ab180a64
     List<LineMetrics> lines = textPainter.computeLineMetrics();
-    double currentPageBottom = pageSize.height;
+    double currentPageBottom = pageSize.height - 180.h;
     int currentPageStartIndex = 0;
     int currentPageEndIndex = 0;
 
@@ -129,7 +127,7 @@ class _PagingWidgetState extends State<PagingWidget> {
       // Current line overflow page
       if (currentPageBottom < bottom) {
         currentPageEndIndex =
-            textPainter.getPositionForOffset(Offset(left, top - 100.h)).offset;
+            textPainter.getPositionForOffset(Offset(left, top)).offset;
 
         var pageText = widget.textContent
             .substring(currentPageStartIndex, currentPageEndIndex);
@@ -152,62 +150,62 @@ class _PagingWidgetState extends State<PagingWidget> {
 
         _pageTexts.add(pageText);
 
-        var innerHtml = widget.innerHtmlContent;
-
         currentPageStartIndex = currentPageEndIndex;
-        currentPageBottom =
-            top + pageSize.height - (innerHtml != null ? 200.h : 140.h);
+        currentPageBottom = top + (pageSize.height - 230.h);
       }
     }));
 
     final lastPageText = widget.textContent.substring(currentPageStartIndex);
     _pageTexts.add(lastPageText);
 
+    var index = -1;
     // Assuming each operation within the loop is asynchronous and returns a Future
     List<Future<Widget>> futures = _pageTexts.map((text) async {
+      index++;
       return InkWell(
         onTap: widget.onTextTap,
-        child: Container(
-          color: widget.style.backgroundColor,
-          child: Padding(
+        child: Padding(
             padding: EdgeInsets.only(top: 60.h, left: 10.w, right: 10.w),
-            child: widget.innerHtmlContent != null
-                ? HtmlWidget(
-                    text,
-                    onTapUrl: (String? s) async {
-                      if (s != null && s == "a") {
-                        if (s.contains("chapter")) {
-                          setState(() {
-                            ///Write logic for goto chapter
-                            // var s1 = s.split("-0");
-                            // String break1 =
-                            //     s1.toList().last.split(".xhtml").first;
-                            // int number = int.parse(break1);
-                          });
-                        }
-                      }
-                      return true;
-                    },
-                    textStyle: widget.style,
-                  )
-                : Text(
-                    '$text →',
-                    textAlign: TextAlign.justify,
-                    style: widget.style,
-                  ),
-          ),
-        ),
+            child: HtmlWidget(
+              textToHtml(
+                  '$text ${(index != 0 && index != _pageTexts.length - 1) ? '→' : ''}'),
+              customStylesBuilder: (element) {
+                if (element.localName == 'p') {
+                  return {'text-align': 'justify'};
+                }
+                return null;
+              },
+              onTapUrl: (String? s) async {
+                if (s != null && s == "a") {
+                  if (s.contains("chapter")) {
+                    setState(() {
+                      ///Write logic for goto chapter
+                      // var s1 = s.split("-0");
+                      // String break1 =
+                      //     s1.toList().last.split(".xhtml").first;
+                      // int number = int.parse(break1);
+                    });
+                  }
+                }
+                return true;
+              },
+              textStyle: widget.style,
+            )),
       );
     }).toList();
 
     pages = await Future.wait(futures);
+    return _pageTexts.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return FutureBuilder<int>(
         future: paginateFuture,
         builder: (context, snapshot) {
+          var handler = PagingTextHandler(paginate: rePaginate);
+          widget.handlerCallback(handler, snapshot.data ?? 0); // callback call.
+
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               {
@@ -255,7 +253,8 @@ class _PagingWidgetState extends State<PagingWidget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.first_page),
+                                icon:
+                                    Icon(Icons.first_page, color: Colors.blue),
                                 onPressed: () {
                                   setState(() {
                                     _currentPageIndex = 0;
@@ -265,7 +264,8 @@ class _PagingWidgetState extends State<PagingWidget> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.navigate_before),
+                                icon: Icon(Icons.navigate_before,
+                                    color: Colors.blue),
                                 onPressed: () {
                                   setState(() {
                                     if (_currentPageIndex > 0)
@@ -279,7 +279,8 @@ class _PagingWidgetState extends State<PagingWidget> {
                                 '${_currentPageIndex + 1}/${_pageTexts.length}',
                               ),
                               IconButton(
-                                icon: Icon(Icons.navigate_next),
+                                icon: Icon(Icons.navigate_next,
+                                    color: Colors.blue),
                                 onPressed: () {
                                   setState(() {
                                     if (_currentPageIndex <
@@ -291,7 +292,7 @@ class _PagingWidgetState extends State<PagingWidget> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.last_page),
+                                icon: Icon(Icons.last_page, color: Colors.blue),
                                 onPressed: () {
                                   setState(() {
                                     _currentPageIndex = _pageTexts.length - 1;
