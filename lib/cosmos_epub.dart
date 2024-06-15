@@ -13,12 +13,40 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class CosmosEpub {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
   static bool _initialized = false;
+  static Future<void> openfileBook(
+      {required  Uint8List bytes,
+        required BuildContext context,
+        required String bookId,
+        Color accentColor = Colors.indigoAccent,
+        Function(int currentPage, int totalPages)? onPageFlip,
+        Function(int lastPageIndex)? onLastPage,
+        String chapterListTitle = 'Table of Contents',
+        bool shouldOpenDrawer = false,
+        int starterChapter = -1}) async {
+
+
+    EpubBook epubBook =await EpubReader.readBook(bytes);
+   // EpubBook epubBook =await EpubReader.readBook(bytess);
+
+    if (!context.mounted) return;
+    _openBook(
+        context: context,
+        epubBook: epubBook,
+        bookId: bookId,
+        shouldOpenDrawer: shouldOpenDrawer,
+        starterChapter: starterChapter,
+        chapterListTitle: chapterListTitle,
+        onPageFlip: onPageFlip,
+        onLastPage: onLastPage,
+        accentColor: accentColor);
+  }
    static Future<void> openURLBook(
       {required String URl,
         required BuildContext context,
