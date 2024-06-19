@@ -16,6 +16,13 @@ import 'Helpers/pagination.dart';
 import 'Helpers/progress_singleton.dart';
 import 'Model/chapter_model.dart';
 
+///TODO: Change Future to more controllable timer to control show/hide elements
+///  BUG-1: https://github.com/Mamasodikov/cosmos_epub/issues/2
+///- Add sub chapters support
+///- Add image support
+///- Change HtmlWidget to Html
+///- Add justification / word-break support
+
 late BookProgressSingleton bookProgress;
 
 const double DESIGN_WIDTH = 375;

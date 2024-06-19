@@ -99,6 +99,8 @@ To open an EPUB file from a local storage, use the `openLocalBook` method:
         });
    ``` 
 
+Also you can use `CosmosEpub.openURLBook` and `CosmosEpub.openFileBook` for your convenience. 
+
 For clearing theming cache, use this method:
 
   ```dart
