@@ -117,14 +117,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_html:
+  flutter_html_reborn:
     dependency: transitive
     description:
-      name: flutter_html
-      sha256: "02ad69e813ecfc0728a455e4bf892b9379983e050722b1dce00192ee2e41d1ee"
+      name: flutter_html_reborn
+      sha256: aada9f12e80a31562575e39350846152b61a67a283cf66092be6fdfd5aa07907
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0-beta.2"
+    version: "3.0.0"
   flutter_screenutil:
     dependency: "direct main"
     description:
