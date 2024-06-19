@@ -4,8 +4,8 @@ import 'package:cosmos_epub/PageFlip/page_flip_widget.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 class PagingTextHandler {
   final Function paginate;
@@ -125,10 +125,14 @@ class _PagingWidgetState extends State<PagingWidget> {
       final top = line.baseline - line.ascent;
       final bottom = line.baseline + line.descent;
 
+      var innerHtml = widget.innerHtmlContent;
+
       // Current line overflow page
       if (currentPageBottom < bottom) {
-        currentPageEndIndex =
-            textPainter.getPositionForOffset(Offset(left, top - 100.h)).offset;
+        currentPageEndIndex = textPainter
+            .getPositionForOffset(
+                Offset(left, top - 100.h))
+            .offset;
 
         var pageText = widget.textContent
             .substring(currentPageStartIndex, currentPageEndIndex);
@@ -151,11 +155,9 @@ class _PagingWidgetState extends State<PagingWidget> {
 
         _pageTexts.add(pageText);
 
-        var innerHtml = widget.innerHtmlContent;
-
         currentPageStartIndex = currentPageEndIndex;
         currentPageBottom =
-            top + pageSize.height - (innerHtml != null ? 200.h : 150.h);
+            top + pageSize.height - 150.h;
       }
     }));
 
@@ -178,27 +180,18 @@ class _PagingWidgetState extends State<PagingWidget> {
                 padding: EdgeInsets.only(
                     bottom: 40.h, top: 60.h, left: 10.w, right: 10.w),
                 child: widget.innerHtmlContent != null
-                    ? HtmlWidget(
-                        text,
-                        onTapUrl: (String? s) async {
-                          if (s != null && s == "a") {
-                            if (s.contains("chapter")) {
-                              setState(() {
-                                ///Write logic for goto chapter
-                                // var s1 = s.split("-0");
-                                // String break1 =
-                                //     s1.toList().last.split(".xhtml").first;
-                                // int number = int.parse(break1);
-                              });
-                            }
-                          }
-                          return true;
+                    ? Html(
+                        data: text,
+                        style: {
+                          "*": Style(
+                              textAlign: TextAlign.justify,
+                              fontSize: FontSize(widget.style.fontSize ?? 0),
+                              fontFamily: widget.style.fontFamily,
+                              color: widget.style.color),
                         },
-                        textStyle: widget.style,
                       )
                     : Text(
                         text,
-                        // Assuming _isPaging and _currentIndex are handled elsewhere
                         textAlign: TextAlign.justify,
                         style: widget.style,
                         overflow: TextOverflow.visible,

@@ -20,8 +20,8 @@ dependencies:
   get_storage: ^2.1.1
   flutter_screenutil: ^5.9.0
   html: ^0.15.4
-  flutter_widget_from_html: ^0.14.11
-  flutter_widget_from_html_core: ^0.14.12
+  http: ^1.1.0
+  flutter_html: ^3.0.0-beta.2
   fading_edge_scrollview: ^4.1.1
   path_provider: ^2.1.3
 

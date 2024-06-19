@@ -20,8 +20,7 @@ import 'Model/chapter_model.dart';
 ///  BUG-1: https://github.com/Mamasodikov/cosmos_epub/issues/2
 ///- Add sub chapters support
 ///- Add image support
-///- Change HtmlWidget to Html
-///- Add justification / word-break support
+///- Add text style attributes / word-break support
 
 late BookProgressSingleton bookProgress;
 
