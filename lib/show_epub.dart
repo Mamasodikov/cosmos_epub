@@ -668,8 +668,14 @@ class ShowEpubState extends State<ShowEpub> {
                                         updateUI();
                                       },
                                       onPageFlip: (currentPage, totalPages) {
-
                                         showAndHideCounter();
+
+                                        ///Update counter
+                                        setState(() {
+                                          this.currentPage = currentPage+1;
+                                        });
+
+
                                         if (widget.onPageFlip != null) {
                                           widget.onPageFlip!(
                                               currentPage, totalPages);
