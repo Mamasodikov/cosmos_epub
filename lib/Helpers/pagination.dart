@@ -115,7 +115,7 @@ class _PagingWidgetState extends State<PagingWidget> {
 
     // https://medium.com/swlh/flutter-line-metrics-fd98ab180a64
     List<LineMetrics> lines = textPainter.computeLineMetrics();
-    double currentPageBottom = pageSize.height - 180.h;
+    double currentPageBottom = pageSize.height - 80.h;
     int currentPageStartIndex = 0;
     int currentPageEndIndex = 0;
 
@@ -151,7 +151,7 @@ class _PagingWidgetState extends State<PagingWidget> {
         _pageTexts.add(pageText);
 
         currentPageStartIndex = currentPageEndIndex;
-        currentPageBottom = top + (pageSize.height - 230.h);
+        currentPageBottom = top + (pageSize.height - 140.h);
       }
     }));
 

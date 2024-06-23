@@ -636,7 +636,6 @@ class ShowEpubState extends State<ShowEpub> {
 
                                     return PagingWidget(
                                       textContent,
-                                      innerHtmlContent,
 
                                       ///Do we need this to the production
                                       lastWidget: null,
