@@ -1,11 +1,11 @@
 name: cosmos_epub
 description: EPUB reader package with great UI, easy customization and awesome features
-version: 0.0.2
+version: 0.0.3
 
 homepage: https://github.com/Mamasodikov/cosmos_epub
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -38,12 +38,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   assets:
     - assets/
 
   fonts:
-
     #book fonts
     - family: Alegreya
       fonts:

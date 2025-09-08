@@ -1,4 +1,5 @@
 import 'package:cosmos_epub/Helpers/context_extensions.dart';
+import 'package:cosmos_epub/Helpers/functions.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +88,7 @@ class ShowEpubState extends State<ShowEpub> {
   List<LocalChapterModel> chaptersList = [];
   double _fontSizeProgress = 17.0;
   double _fontSize = 17.0;
+  TextDirection currentTextDirection = TextDirection.ltr;
 
   late EpubBook epubBook;
   late String bookId;
@@ -234,6 +236,10 @@ class ShowEpubState extends State<ShowEpub> {
     } else {
       textContent = textContent.replaceAll('Unknown', '').trim();
     }
+
+    // Detect text direction for the current content
+    currentTextDirection = RTLHelper.getTextDirection(textContent);
+
     controllerPaging.paginate();
 
     setupNavButtons();
@@ -769,66 +775,86 @@ class ShowEpubState extends State<ShowEpub> {
                                 width: 3.w, color: widget.accentColor),
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            Visibility(
-                              visible: showPrevious,
-                              child: IconButton(
-                                  onPressed: () {
-                                    prevChapter();
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_back_ios,
-                                    size: 15.h,
-                                    color: fontColor,
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            Expanded(
-                              flex: 10,
-                              child: Text(
-                                chaptersList.isNotEmpty
-                                    ? chaptersList[bookProgress
-                                                .getBookProgress(bookId)
-                                                .currentChapterIndex ??
-                                            0]
-                                        .chapter
-                                    : 'Loading...',
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 13.sp,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontFamily: selectedTextStyle,
-                                    package: 'cosmos_epub',
-                                    fontWeight: FontWeight.bold,
-                                    color: fontColor),
+                        child: Directionality(
+                          textDirection: currentTextDirection,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: 5.w,
                               ),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            Visibility(
-                                visible: showNext,
+                              Visibility(
+                                visible:
+                                    currentTextDirection == TextDirection.rtl
+                                        ? showNext
+                                        : showPrevious,
                                 child: IconButton(
                                     onPressed: () {
-                                      nextChapter();
+                                      currentTextDirection == TextDirection.rtl
+                                          ? nextChapter()
+                                          : prevChapter();
                                     },
                                     icon: Icon(
-                                      Icons.arrow_forward_ios_rounded,
+                                      currentTextDirection == TextDirection.rtl
+                                          ? Icons.arrow_forward_ios_rounded
+                                          : Icons.arrow_back_ios,
                                       size: 15.h,
                                       color: fontColor,
-                                    ))),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                          ],
+                                    )),
+                              ),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                              Expanded(
+                                flex: 10,
+                                child: Text(
+                                  chaptersList.isNotEmpty
+                                      ? chaptersList[bookProgress
+                                                  .getBookProgress(bookId)
+                                                  .currentChapterIndex ??
+                                              0]
+                                          .chapter
+                                      : 'Loading...',
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  textDirection: currentTextDirection,
+                                  style: TextStyle(
+                                      fontSize: 13.sp,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontFamily: selectedTextStyle,
+                                      package: 'cosmos_epub',
+                                      fontWeight: FontWeight.bold,
+                                      color: fontColor),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                              Visibility(
+                                  visible:
+                                      currentTextDirection == TextDirection.rtl
+                                          ? showPrevious
+                                          : showNext,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        currentTextDirection ==
+                                                TextDirection.rtl
+                                            ? prevChapter()
+                                            : nextChapter();
+                                      },
+                                      icon: Icon(
+                                        currentTextDirection ==
+                                                TextDirection.rtl
+                                            ? Icons.arrow_back_ios
+                                            : Icons.arrow_forward_ios_rounded,
+                                        size: 15.h,
+                                        color: fontColor,
+                                      ))),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -840,66 +866,71 @@ class ShowEpubState extends State<ShowEpub> {
                   color: backColor,
                   child: Padding(
                     padding: EdgeInsets.only(top: 3.h),
-                    child: AppBar(
-                      centerTitle: true,
-                      title: Text(
-                        bookTitle,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                            color: fontColor),
-                      ),
-                      backgroundColor: backColor,
-                      shape: Border(
-                          bottom: BorderSide(
-                              color: widget.accentColor, width: 3.h)),
-                      elevation: 0,
-                      leading: IconButton(
-                        onPressed: openTableOfContents,
-                        icon: Icon(
-                          Icons.menu,
-                          color: fontColor,
-                          size: 20.h,
+                    child: Directionality(
+                      textDirection: currentTextDirection,
+                      child: AppBar(
+                        centerTitle: true,
+                        title: Text(
+                          bookTitle,
+                          textDirection: currentTextDirection,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                              color: fontColor),
                         ),
-                      ),
-                      actions: [
-                        InkWell(
-                            onTap: () {
-                              updateFontSettings();
-                            },
-                            child: Container(
-                              width: 40.w,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Aa",
-                                style: TextStyle(
-                                    fontSize: 18.sp,
-                                    color: fontColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )),
-                        SizedBox(
-                          width: 5.w,
+                        backgroundColor: backColor,
+                        shape: Border(
+                            bottom: BorderSide(
+                                color: widget.accentColor, width: 3.h)),
+                        elevation: 0,
+                        leading: IconButton(
+                          onPressed: openTableOfContents,
+                          icon: Icon(
+                            Icons.menu,
+                            color: fontColor,
+                            size: 20.h,
+                          ),
                         ),
-                        InkWell(
-                            onTap: () async {
-                              setState(() {
-                                showBrightnessWidget = true;
-                              });
-                              await Future.delayed(const Duration(seconds: 7));
-                              setState(() {
-                                showBrightnessWidget = false;
-                              });
-                            },
-                            child: Icon(
-                              Icons.brightness_high_sharp,
-                              size: 20.h,
-                              color: fontColor,
-                            )),
-                        SizedBox(
-                          width: 10.w,
-                        )
-                      ],
+                        actions: [
+                          InkWell(
+                              onTap: () {
+                                updateFontSettings();
+                              },
+                              child: Container(
+                                width: 40.w,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Aa",
+                                  style: TextStyle(
+                                      fontSize: 18.sp,
+                                      color: fontColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  showBrightnessWidget = true;
+                                });
+                                await Future.delayed(
+                                    const Duration(seconds: 7));
+                                setState(() {
+                                  showBrightnessWidget = false;
+                                });
+                              },
+                              child: Icon(
+                                Icons.brightness_high_sharp,
+                                size: 20.h,
+                                color: fontColor,
+                              )),
+                          SizedBox(
+                            width: 10.w,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),

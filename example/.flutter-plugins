@@ -1,13 +1,13 @@
 # This is a generated file; do not edit or check into version control.
-fluttertoast=/Users/scorpion/.pub-cache/hosted/pub.dev/fluttertoast-8.2.5/
-isar_flutter_libs=/Users/scorpion/.pub-cache/hosted/pub.dev/isar_flutter_libs-3.1.0+1/
-path_provider=/Users/scorpion/.pub-cache/hosted/pub.dev/path_provider-2.1.3/
-path_provider_android=/Users/scorpion/.pub-cache/hosted/pub.dev/path_provider_android-2.2.3/
-path_provider_foundation=/Users/scorpion/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.2/
-path_provider_linux=/Users/scorpion/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1/
-path_provider_windows=/Users/scorpion/.pub-cache/hosted/pub.dev/path_provider_windows-2.2.1/
-screen_brightness=/Users/scorpion/.pub-cache/hosted/pub.dev/screen_brightness-1.0.1/
-screen_brightness_android=/Users/scorpion/.pub-cache/hosted/pub.dev/screen_brightness_android-1.0.1/
-screen_brightness_ios=/Users/scorpion/.pub-cache/hosted/pub.dev/screen_brightness_ios-1.0.1/
-screen_brightness_macos=/Users/scorpion/.pub-cache/hosted/pub.dev/screen_brightness_macos-1.0.1/
-screen_brightness_windows=/Users/scorpion/.pub-cache/hosted/pub.dev/screen_brightness_windows-1.0.1/
+fluttertoast=/Users/m3pro/.pub-cache/hosted/pub.dev/fluttertoast-8.2.12/
+isar_flutter_libs=/Users/m3pro/.pub-cache/hosted/pub.dev/isar_flutter_libs-3.1.0+1/
+path_provider=/Users/m3pro/.pub-cache/hosted/pub.dev/path_provider-2.1.5/
+path_provider_android=/Users/m3pro/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17/
+path_provider_foundation=/Users/m3pro/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1/
+path_provider_linux=/Users/m3pro/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1/
+path_provider_windows=/Users/m3pro/.pub-cache/hosted/pub.dev/path_provider_windows-2.3.0/
+screen_brightness=/Users/m3pro/.pub-cache/hosted/pub.dev/screen_brightness-1.0.1/
+screen_brightness_android=/Users/m3pro/.pub-cache/hosted/pub.dev/screen_brightness_android-1.0.1/
+screen_brightness_ios=/Users/m3pro/.pub-cache/hosted/pub.dev/screen_brightness_ios-1.0.1/
+screen_brightness_macos=/Users/m3pro/.pub-cache/hosted/pub.dev/screen_brightness_macos-1.0.1/
+screen_brightness_windows=/Users/m3pro/.pub-cache/hosted/pub.dev/screen_brightness_windows-1.0.1/

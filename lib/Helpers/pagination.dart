@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cosmos_epub/PageFlip/page_flip_widget.dart';
+import 'package:cosmos_epub/Helpers/functions.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -100,6 +101,9 @@ class _PagingWidgetState extends State<PagingWidget> {
 
     _pageTexts.clear();
 
+    // Detect text direction based on content
+    final textDirection = RTLHelper.getTextDirection(widget.textContent);
+
     final textSpan = TextSpan(
       text: widget.textContent,
       style: widget.style,
@@ -107,7 +111,7 @@ class _PagingWidgetState extends State<PagingWidget> {
 
     final textPainter = TextPainter(
       text: textSpan,
-      textDirection: TextDirection.ltr,
+      textDirection: textDirection,
     );
     textPainter.layout(
       minWidth: 0,
@@ -167,6 +171,9 @@ class _PagingWidgetState extends State<PagingWidget> {
     // Assuming each operation within the loop is asynchronous and returns a Future
     List<Future<Widget>> futures = _pageTexts.map((text) async {
       final _scrollController = ScrollController();
+      // Detect text direction for each page text
+      final pageTextDirection = RTLHelper.getTextDirection(text);
+
       return InkWell(
         onTap: widget.onTextTap,
         child: Container(
@@ -179,23 +186,27 @@ class _PagingWidgetState extends State<PagingWidget> {
               child: Padding(
                 padding: EdgeInsets.only(
                     bottom: 40.h, top: 60.h, left: 10.w, right: 10.w),
-                child: widget.innerHtmlContent != null
-                    ? Html(
-                        data: text,
-                        style: {
-                          "*": Style(
-                              textAlign: TextAlign.justify,
-                              fontSize: FontSize(widget.style.fontSize ?? 0),
-                              fontFamily: widget.style.fontFamily,
-                              color: widget.style.color),
-                        },
-                      )
-                    : Text(
-                        text,
-                        textAlign: TextAlign.justify,
-                        style: widget.style,
-                        overflow: TextOverflow.visible,
-                      ),
+                child: Directionality(
+                  textDirection: pageTextDirection,
+                  child: widget.innerHtmlContent != null
+                      ? Html(
+                          data: text,
+                          style: {
+                            "*": Style(
+                                textAlign: TextAlign.justify,
+                                fontSize: FontSize(widget.style.fontSize ?? 0),
+                                fontFamily: widget.style.fontFamily,
+                                color: widget.style.color),
+                          },
+                        )
+                      : Text(
+                          text,
+                          textAlign: TextAlign.justify,
+                          textDirection: pageTextDirection,
+                          style: widget.style,
+                          overflow: TextOverflow.visible,
+                        ),
+                ),
               ),
             ),
           ),

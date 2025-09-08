@@ -11,14 +11,17 @@ The reader is **responsive**, enabling its use with both normal-sized smartphone
 
 
 - Open EPUB files from assets or local path.
+- **RTL (Right-to-Left) language support** for Arabic, Persian, Hebrew, Urdu, and other RTL languages
+- **Automatic text direction detection** with proper alignment and navigation
 - Change themes with 5 options: Grey, Purple, White, Black, and Pink
 - Customize font style and size
 - Access table of contents and navigate to specific chapters
 - Display current chapter name at the bottom of the screen
-- Previous and next buttons to switch between chapters
+- Previous and next buttons to switch between chapters (RTL-aware)
 - Adjust screen brightness
 - Save book reading progress
 - Nice page flip animation while reading
+- **Mixed content support** (LTR + RTL text in the same document)
 - ...and feel free to ask for new features @ generalmarshallinbox@gmail.com or open an issue.
 
 ## Getting Started #
@@ -107,6 +110,46 @@ For clearing theming cache, use this method:
     await CosmosEpub.clearThemeCache();
   ```
 
+## RTL Language Support 🌍
+
+CosmosEpub now includes comprehensive support for Right-to-Left (RTL) languages such as Arabic, Persian (Farsi), Hebrew, Urdu, and more.
+
+### Features:
+- **Automatic Detection**: The library automatically detects RTL content and applies appropriate text direction
+- **Smart Navigation**: Navigation buttons automatically reverse for RTL content (left arrow becomes "next" for RTL)
+- **Proper Alignment**: Text is properly aligned based on language direction
+- **Chapter List Support**: Table of contents supports RTL layout with proper indentation
+- **Mixed Content**: Handles documents with both LTR and RTL text seamlessly
+
+### Supported Languages:
+- Arabic (العربية)
+- Persian/Farsi (فارسی)
+- Hebrew (עברית)
+- Urdu (اردو)
+- Pashto (پښتو)
+- Sindhi (سنڌي)
+- Kurdish (کوردی)
+- Dhivehi/Maldivian (ދިވެހި)
+- Yiddish (ייִדיש)
+
+### Usage:
+No additional configuration is required! Simply open your RTL EPUB file as usual:
+
+```dart
+await CosmosEpub.openAssetBook(
+    assetPath: 'assets/arabic_book.epub',
+    context: context,
+    bookId: 'arabic_book_1',
+    onPageFlip: (currentPage, totalPages) {
+      print('Page: $currentPage of $totalPages');
+    },
+);
+```
+
+The library will automatically:
+1. Detect the text direction from the content
+2. Apply proper RTL layout and navigation
+3. Handle mixed LTR/RTL content appropriately
 
 ***Note: I haven't handled all exceptions, so control it on your own side. For example, if you give same bookId to the another book, it can open page and chapter from that book's progress or may break 💀***
 
