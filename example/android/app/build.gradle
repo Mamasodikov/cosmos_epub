@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace "com.example.example"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion = "26.1.10909125"
 
     compileOptions {
@@ -28,7 +28,7 @@ android {
         applicationId "com.example.example"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 32
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

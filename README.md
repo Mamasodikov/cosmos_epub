@@ -1,7 +1,6 @@
 # CosmosEpub 💫
 
-**CosmosEpub** is a Flutter package that allows users to open and read **EPUB** files easily. It provides features like opening **EPUB** files from ***assets*** or ***local path***, changing themes, adjusting font styles and sizes, accessing chapter contents, and more.
-The reader is **responsive**, enabling its use with both normal-sized smartphones and tablets.
+A feature-rich EPUB reader package for Flutter with page flip animations, text highlighting, hyphenation, infinite nested chapters, image support, RTL languages, customizable themes and fonts.
 
 ## Showcase
 
@@ -9,148 +8,154 @@ The reader is **responsive**, enabling its use with both normal-sized smartphone
 
 ## Features
 
+- **Text Highlighting** — select text, pick a color (6 options), highlights persist across sessions. Re-highlight to change color. Copy & Select All support.
+- **Hyphenation** — syllable-aware word breaking for better justified text. Visible "-" at line breaks. Respects Uzbek digraphs (ch, sh, g', o').
+- **Infinite Nested Chapters** — recursive TOC with unlimited depth. Section title pages auto-generated.
+- **Image Support** — EPUB images rendered inline (PNG, JPEG, GIF, SVG, WebP).
+- **Page Flip Animation** — realistic 3D page curl effect with swipe gestures.
+- **5 Themes** — Grey, Purple, White, Black, Pink.
+- **14 Fonts** — Alegreya, Amazon Ember, Bookerly, EB Garamond, Lora, Ubuntu, and more.
+- **RTL Support** — Arabic, Persian, Hebrew, Urdu, and other RTL languages with auto-detection.
+- **Reading Progress** — chapter and page position saved per book.
+- **Brightness Control** — in-reader brightness slider.
+- **Multiple Sources** — open EPUB from assets, local file, URL, or raw bytes.
+- **Robust Parsing** — 3-tier chapter resolution (NCX NavMap → epubx Chapters → Spine order). Handles malformed EPUBs.
 
-- Open EPUB files from assets or local path.
-- **RTL (Right-to-Left) language support** for Arabic, Persian, Hebrew, Urdu, and other RTL languages
-- **Automatic text direction detection** with proper alignment and navigation
-- Change themes with 5 options: Grey, Purple, White, Black, and Pink
-- Customize font style and size
-- Access table of contents and navigate to specific chapters
-- Display current chapter name at the bottom of the screen
-- Previous and next buttons to switch between chapters (RTL-aware)
-- Adjust screen brightness
-- Save book reading progress
-- Nice page flip animation while reading
-- **Mixed content support** (LTR + RTL text in the same document)
-- ...and feel free to ask for new features @ generalmarshallinbox@gmail.com or open an issue.
+## Getting Started
 
-## Getting Started #
+Add the dependency:
 
-In your flutter project add the dependency:
+```yaml
+dependencies:
+  cosmos_epub: ^1.0.0
+```
 
-   ```yaml
-   dependencies:
-     cosmos_epub: ^x.y.z
-   ```  
+```bash
+flutter pub get
+```
 
-Run the command:
+## Usage
 
-   ```yaml
-   flutter pub get
-   ```    
-For more information, check out the [documentation](https://flutter.dev/).
+### Initialize
 
-## Usage example
-Import the package in your Dart code:
-
-   ```yaml
-   import 'package:cosmos_epub/cosmos_epub.dart';
-   ```  
-First things first, you have to `initialize` databases before using any other method. Kindly, do it earlier, preferably in the main.dart file.
-
-There are various methods to control over book progress DB too for your ease :)
+Call `initialize()` once before using any other method (preferably in `main.dart`):
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initializer and methods return a bool
-  var _initialized = await CosmosEpub.initialize();
-  
-  if (_initialized) {
-    BookProgressModel bookProgress = CosmosEpub.getBookProgress('bookId');
-    await CosmosEpub.setCurrentPageIndex('bookId', 1);
-    await CosmosEpub.setCurrentChapterIndex('bookId', 2);
-    await CosmosEpub.deleteBookProgress('bookId');
-    await CosmosEpub.deleteAllBooksProgress();
-  }
-
+  await CosmosEpub.initialize();
   runApp(MyApp());
 }
 ```
 
-To open an EPUB file from the assets, use the `openAssetBook` method:
-
-   ```dart
-    await CosmosEpub.openAssetBook(
-        assetPath: 'assets/book.epub',
-        context: context,
-        // Book ID is required to save the progress for each opened book
-        bookId: '3',
-        // Callbacks are optional
-        onPageFlip: (int currentPage, int totalPages) {
-          print(currentPage);
-        },
-        onLastPage: (int lastPageIndex) {
-          print('We arrived to the last widget');
-        });
-   ```  
-To open an EPUB file from a local storage, use the `openLocalBook` method:
-
-   ```dart
-    await CosmosEpub.openLocalBook(
-        localPath: book.path,
-        context: context,
-        // Book ID is required to save the progress for each opened book
-        bookId: '3'
-        // Callbacks are optional
-        onPageFlip: (int currentPage, int totalPages) {
-          print(currentPage);
-        },
-        onLastPage: (int lastPageIndex) {
-          print('We arrived to the last widget');
-        });
-   ``` 
-
-Also you can use `CosmosEpub.openURLBook` and `CosmosEpub.openFileBook` for your convenience. 
-
-For clearing theming cache, use this method:
-
-  ```dart
-    await CosmosEpub.clearThemeCache();
-  ```
-
-## RTL Language Support 🌍
-
-CosmosEpub now includes comprehensive support for Right-to-Left (RTL) languages such as Arabic, Persian (Farsi), Hebrew, Urdu, and more.
-
-### Features:
-- **Automatic Detection**: The library automatically detects RTL content and applies appropriate text direction
-- **Smart Navigation**: Navigation buttons automatically reverse for RTL content (left arrow becomes "next" for RTL)
-- **Proper Alignment**: Text is properly aligned based on language direction
-- **Chapter List Support**: Table of contents supports RTL layout with proper indentation
-- **Mixed Content**: Handles documents with both LTR and RTL text seamlessly
-
-### Supported Languages:
-- Arabic (العربية)
-- Persian/Farsi (فارسی)
-- Hebrew (עברית)
-- Urdu (اردو)
-- Pashto (پښتو)
-- Sindhi (سنڌي)
-- Kurdish (کوردی)
-- Dhivehi/Maldivian (ދިވެހި)
-- Yiddish (ייִדיש)
-
-### Usage:
-No additional configuration is required! Simply open your RTL EPUB file as usual:
+### Open a Book
 
 ```dart
+// From assets
 await CosmosEpub.openAssetBook(
-    assetPath: 'assets/arabic_book.epub',
-    context: context,
-    bookId: 'arabic_book_1',
-    onPageFlip: (currentPage, totalPages) {
-      print('Page: $currentPage of $totalPages');
-    },
+  assetPath: 'assets/book.epub',
+  context: context,
+  bookId: 'my_book_1',
+  accentColor: Colors.indigoAccent,
+  onPageFlip: (currentPage, totalPages) {
+    print('Page $currentPage of $totalPages');
+  },
+  onLastPage: (lastPageIndex) {
+    print('Reached last page');
+  },
+);
+
+// From local file
+await CosmosEpub.openLocalBook(
+  localPath: '/path/to/book.epub',
+  context: context,
+  bookId: 'my_book_2',
+);
+
+// From URL
+await CosmosEpub.openURLBook(
+  urlPath: 'https://example.com/book.epub',
+  context: context,
+  bookId: 'my_book_3',
+);
+
+// From bytes
+await CosmosEpub.openFileBook(
+  bytes: myUint8List,
+  context: context,
+  bookId: 'my_book_4',
 );
 ```
 
-The library will automatically:
-1. Detect the text direction from the content
-2. Apply proper RTL layout and navigation
-3. Handle mixed LTR/RTL content appropriately
+### Progress Management
 
-***Note: I haven't handled all exceptions, so control it on your own side. For example, if you give same bookId to the another book, it can open page and chapter from that book's progress or may break 💀***
+```dart
+// Get current progress
+BookProgressModel progress = CosmosEpub.getBookProgress('my_book_1');
+print('Chapter: ${progress.currentChapterIndex}');
+print('Page: ${progress.currentPageIndex}');
 
-***Feel free to contact me if you have any questions: https://allmylinks.com/mamasodikov***
+// Set progress manually
+await CosmosEpub.setCurrentChapterIndex('my_book_1', 5);
+await CosmosEpub.setCurrentPageIndex('my_book_1', 3);
+
+// Delete progress
+await CosmosEpub.deleteBookProgress('my_book_1');
+await CosmosEpub.deleteAllBooksProgress();
+```
+
+### Highlight Management
+
+```dart
+// Get all highlights for a book
+List<HighlightModel> highlights = CosmosEpub.getBookHighlights('my_book_1');
+
+// Remove a specific highlight
+CosmosEpub.removeHighlight(highlights.first.id);
+
+// Remove all highlights for a book
+CosmosEpub.removeAllHighlights('my_book_1');
+```
+
+### Clear Theme Cache
+
+```dart
+await CosmosEpub.clearThemeCache();
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `assetPath` / `localPath` / `urlPath` / `bytes` | `String` / `Uint8List` | required | EPUB source |
+| `context` | `BuildContext` | required | Build context for navigation |
+| `bookId` | `String` | required | Unique ID for progress tracking |
+| `accentColor` | `Color` | `Colors.indigoAccent` | Primary accent color |
+| `onPageFlip` | `Function(int, int)?` | `null` | Called on page change |
+| `onLastPage` | `Function(int)?` | `null` | Called on last page |
+| `chapterListTitle` | `String` | `'Table of Contents'` | TOC screen title |
+| `shouldOpenDrawer` | `bool` | `false` | Open TOC on start |
+| `starterChapter` | `int` | `-1` | Start at specific chapter |
+
+## RTL Language Support 🌍
+
+Automatic detection and support for Right-to-Left languages:
+
+- Arabic (العربية), Persian (فارسی), Hebrew (עברית), Urdu (اردو)
+- Pashto (پښتو), Sindhi (سنڌي), Kurdish (کوردی), Dhivehi (ދިވެހި), Yiddish (ייִדיש)
+
+No configuration needed — just open the EPUB and the library handles direction, alignment, and navigation automatically.
+
+## Notes
+
+- Each book must have a unique `bookId`. Using the same ID for different books will cause progress conflicts.
+- Highlights are stored locally via GetStorage and persist across app restarts.
+- The package uses `isar_community` for progress persistence (Android/iOS/Desktop only, no web support).
+
+## License
+
+MIT
+
+## Contact
+
+Feel free to open an issue or reach out: [https://allmylinks.com/mamasodikov](https://allmylinks.com/mamasodikov)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../Model/chapter_model.dart';
 import '../show_epub.dart';
@@ -42,21 +43,24 @@ class ChaptersList extends StatelessWidget {
                 color: fontColor,
                 size: 20.h,
               )),
-          centerTitle: true,
-          title: Text(
-            chapterListTitle,
-            textDirection: textDirection,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: accentColor,
-                fontSize: 15.sp),
-          ),
         ),
         body: SafeArea(
           child: Container(
             color: backColor,
             padding: EdgeInsets.all(10.h),
-            child: ListView.builder(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  child: SvgPicture.asset(
+                    'assets/ornament.svg',
+                    package: 'cosmos_epub',
+                    height: 20.h,
+                    colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
                 itemCount: chapters.length,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, i) {
@@ -73,13 +77,11 @@ class ChaptersList extends StatelessWidget {
                         minLeadingWidth: 20.w,
                         title: Padding(
                           padding: EdgeInsets.only(
-                              left: chapters[i].isSubChapter &&
-                                      textDirection == TextDirection.ltr
-                                  ? 15.w
+                              left: textDirection == TextDirection.ltr
+                                  ? chapters[i].depth * 15.w
                                   : 0,
-                              right: chapters[i].isSubChapter &&
-                                      textDirection == TextDirection.rtl
-                                  ? 15.w
+                              right: textDirection == TextDirection.rtl
+                                  ? chapters[i].depth * 15.w
                                   : 0),
                           child: Text(chapters[i].chapter,
                               textDirection: RTLHelper.getTextDirection(
@@ -97,9 +99,9 @@ class ChaptersList extends StatelessWidget {
                                       .first,
                                   package: 'cosmos_epub',
                                   fontSize: 15.sp,
-                                  fontWeight: chapters[i].isSubChapter
-                                      ? FontWeight.w400
-                                      : FontWeight.w600)),
+                                  fontWeight: chapters[i].depth == 0
+                                      ? FontWeight.w600
+                                      : FontWeight.w400)),
                         ),
                         dense: true,
                       ),
@@ -107,6 +109,9 @@ class ChaptersList extends StatelessWidget {
                     ],
                   );
                 }),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,5 +1,5 @@
 import 'package:cosmos_epub/Model/book_progress_model.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 class BookProgressSingleton {
   final Isar isar;

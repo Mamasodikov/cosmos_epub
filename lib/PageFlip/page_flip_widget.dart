@@ -29,7 +29,8 @@ class PageFlipWidget extends StatefulWidget {
   final double cutoffForward;
   final double cutoffPrevious;
   final bool isRightSwipe;
-  Function(int) onPageFlip;
+  /// Called on page flip. [pageIndex] is the new page, [isForward] is swipe direction.
+  Function(int pageIndex, {bool? isForward}) onPageFlip;
 
   @override
   PageFlipWidgetState createState() => PageFlipWidgetState();
@@ -45,6 +46,24 @@ class PageFlipWidgetState extends State<PageFlipWidget>
   @override
   void didUpdateWidget(PageFlipWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // When children change (new chapter loaded), fully reset
+    if (widget.children.length != oldWidget.children.length ||
+        !identical(widget.children, oldWidget.children)) {
+      // Dispose old controllers
+      for (var c in _controllers) {
+        c.dispose();
+      }
+      // Reset all state
+      imageData = {};
+      currentPage = ValueNotifier(-1);
+      currentWidget = ValueNotifier(Container());
+      currentPageIndex = ValueNotifier(0);
+      pageNumber = 0;
+      _isForward = null;
+      // Rebuild with new children — NOT isRefresh (which uses old pageNumber)
+      _setUp();
+      setState(() {});
+    }
   }
 
   @override
@@ -145,18 +164,18 @@ class PageFlipWidgetState extends State<PageFlipWidget>
         if (!_isLastPage &&
             _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
           await nextPage();
-          widget.onPageFlip(pageNumber);
+          widget.onPageFlip(pageNumber, isForward: true);
         } else {
           if (!_isLastPage) {
             await _controllers[pageNumber].forward();
           }
-          widget.onPageFlip(pageNumber);
+          widget.onPageFlip(pageNumber, isForward: true);
         }
       } else {
         if (!_isFirstPage &&
             _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
           await previousPage();
-          widget.onPageFlip(pageNumber);
+          widget.onPageFlip(pageNumber, isForward: false);
         } else {
           if (_isFirstPage) {
             await _controllers[pageNumber].forward();
@@ -166,7 +185,7 @@ class PageFlipWidgetState extends State<PageFlipWidget>
               await previousPage();
             }
           }
-          widget.onPageFlip(pageNumber);
+          widget.onPageFlip(pageNumber, isForward: false);
         }
       }
     }
