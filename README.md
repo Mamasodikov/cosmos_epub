@@ -154,7 +154,7 @@ No configuration needed — just open the EPUB and the library handles direction
 
 ## License
 
-MIT
+BSD-3
 
 ## Contact
 
