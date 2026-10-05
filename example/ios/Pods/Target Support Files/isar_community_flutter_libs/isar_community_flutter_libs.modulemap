@@ -1,0 +1,6 @@
+framework module isar_community_flutter_libs {
+  umbrella header "isar_community_flutter_libs-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "isar_community_flutter_libs",
+  "version": "1.0.0",
+  "summary": "Flutter binaries for the Isar Database. Needs to be included for Flutter apps.",
+  "homepage": "https://isar-community.dev",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Isar": "hello@isar.dev"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": []
+  },
+  "platforms": {
+    "ios": "11.0"
+  },
+  "swift_versions": "5.3",
+  "vendored_frameworks": "isar.xcframework",
+  "resource_bundles": {
+    "isar_community_flutter_libs_apple_privacy": [
+      "Resources/PrivacyInfo.xcprivacy"
+    ]
+  },
+  "swift_version": "5.3"
+}
