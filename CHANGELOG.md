@@ -1,3 +1,9 @@
+## 1.0.1
+
+* Upgraded to Flutter 3.44.8 (Dart SDK >=3.12.2); minimum Flutter/Dart versions raised accordingly.
+* Updated dependencies: `screen_brightness` ^2.1.11, `fluttertoast` ^10.0.2, `flutter_lints` ^6.0.0, `build_runner` ^2.15.1.
+* Removed obsolete Android Gradle files.
+
 ## 1.0.0
 
 ### Major Rewrite

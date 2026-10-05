@@ -3,7 +3,7 @@ description: >
   Feature-rich EPUB reader package for Flutter with page flip animations,
   text highlighting, hyphenation, infinite nested chapters, image support,
   RTL languages, customizable themes and fonts.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/Mamasodikov/cosmos_epub
 issue_tracker: https://github.com/Mamasodikov/cosmos_epub/issues
 
