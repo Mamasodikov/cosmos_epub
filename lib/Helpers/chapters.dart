@@ -14,13 +14,14 @@ class ChaptersList extends StatelessWidget {
   final Color accentColor;
   final String chapterListTitle;
 
-  ChaptersList(
-      {super.key,
-      required this.chapters,
-      required this.bookId,
-      this.leadingIcon,
-      required this.accentColor,
-      required this.chapterListTitle});
+  ChaptersList({
+    super.key,
+    required this.chapters,
+    required this.bookId,
+    this.leadingIcon,
+    required this.accentColor,
+    required this.chapterListTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +36,11 @@ class ChaptersList extends StatelessWidget {
           toolbarHeight: 40.h,
           backgroundColor: backColor,
           leading: InkWell(
-              onTap: () {
-                Navigator.of(context).pop(false);
-              },
-              child: Icon(
-                Icons.close,
-                color: fontColor,
-                size: 20.h,
-              )),
+            onTap: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Icon(Icons.close, color: fontColor, size: 20.h),
+          ),
         ),
         body: SafeArea(
           child: Container(
@@ -61,33 +59,41 @@ class ChaptersList extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
-                itemCount: chapters.length,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, i) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        onTap: () async {
-                          await bookProgress.setCurrentChapterIndex(bookId, i);
-                          Navigator.of(context).pop(true);
-                        },
-                        leading: leadingIcon,
-                        minLeadingWidth: 20.w,
-                        title: Padding(
-                          padding: EdgeInsets.only(
-                              left: textDirection == TextDirection.ltr
-                                  ? chapters[i].depth * 15.w
-                                  : 0,
-                              right: textDirection == TextDirection.rtl
-                                  ? chapters[i].depth * 15.w
-                                  : 0),
-                          child: Text(chapters[i].chapter,
-                              textDirection: RTLHelper.getTextDirection(
-                                  chapters[i].chapter),
-                              style: TextStyle(
-                                  color: bookProgress
+                    itemCount: chapters.length,
+                    physics: BouncingScrollPhysics(),
+                    itemBuilder: (context, i) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            onTap: () async {
+                              await bookProgress.setCurrentChapterIndex(
+                                bookId,
+                                i,
+                              );
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context).pop(true);
+                            },
+                            leading: leadingIcon,
+                            minLeadingWidth: 20.w,
+                            title: Padding(
+                              padding: EdgeInsets.only(
+                                left: textDirection == TextDirection.ltr
+                                    ? chapters[i].depth * 15.w
+                                    : 0,
+                                right: textDirection == TextDirection.rtl
+                                    ? chapters[i].depth * 15.w
+                                    : 0,
+                              ),
+                              child: Text(
+                                chapters[i].chapter,
+                                textDirection: RTLHelper.getTextDirection(
+                                  chapters[i].chapter,
+                                ),
+                                style: TextStyle(
+                                  color:
+                                      bookProgress
                                               .getBookProgress(bookId)
                                               .currentChapterIndex ==
                                           i
@@ -95,20 +101,24 @@ class ChaptersList extends StatelessWidget {
                                       : fontColor,
                                   fontFamily: fontNames
                                       .where(
-                                          (element) => element == selectedFont)
+                                        (element) => element == selectedFont,
+                                      )
                                       .first,
                                   package: 'cosmos_epub',
                                   fontSize: 15.sp,
                                   fontWeight: chapters[i].depth == 0
                                       ? FontWeight.w600
-                                      : FontWeight.w400)),
-                        ),
-                        dense: true,
-                      ),
-                      Divider(height: 0, thickness: 1.h),
-                    ],
-                  );
-                }),
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            dense: true,
+                          ),
+                          Divider(height: 0, thickness: 1.h),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

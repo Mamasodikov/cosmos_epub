@@ -15,12 +15,11 @@ class CustomToast {
   }
 }
 
-Snack(String msg, BuildContext ctx, Color color) {
-  var snackBar = SnackBar(
-      backgroundColor: color,
-      content: Text(
-        msg,
-        textAlign: TextAlign.center,
-      ));
+void snack(String msg, BuildContext ctx, Color color) {
+  final SnackBar snackBar = SnackBar(
+    backgroundColor: color,
+    content: Text(msg, textAlign: TextAlign.center),
+  );
+
   ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
 }

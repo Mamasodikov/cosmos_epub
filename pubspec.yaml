@@ -8,8 +8,8 @@ repository: https://github.com/Mamasodikov/cosmos_epub
 issue_tracker: https://github.com/Mamasodikov/cosmos_epub/issues
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ">=3.12.2 <4.0.0"
+  flutter: ">=3.44.8"
 
 dependencies:
   flutter:
@@ -30,15 +30,15 @@ dependencies:
   flutter_screenutil: ^5.9.0
   flutter_svg: ^2.2.3
   fading_edge_scrollview: ^4.1.1
-  screen_brightness: ^1.0.1
-  fluttertoast: ^8.2.5
+  screen_brightness: ^2.1.11
+  fluttertoast: ^10.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
   isar_community_generator: ^3.3.2
-  build_runner: ^2.4.9
+  build_runner: ^2.15.1
 
 flutter:
   assets:

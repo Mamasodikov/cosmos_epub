@@ -1,5 +1,3 @@
-library cosmos_epub;
-
 import 'dart:io';
 
 import 'package:cosmos_epub/Component/constants.dart';
@@ -216,7 +214,7 @@ class CosmosEpub {
     }
   }
 
-  static _openBook({
+  static Future<void> _openBook({
     required BuildContext context,
     required EpubBook epubBook,
     required String bookId,

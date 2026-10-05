@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 class PageFlipImage extends StatefulWidget {
   const PageFlipImage({
-    Key? key,
+    super.key,
     required this.amount,
     this.image,
     this.backgroundColor = const Color(0xFFFFFFCC),
     this.isRightSwipe = false,
-  }) : super(key: key);
+  });
 
   final Animation<double> amount;
   final ImageProvider? image;
@@ -41,7 +41,7 @@ class _PageFlipImageState extends State<PageFlipImage> {
   @override
   void didChangeDependencies() {
     _resolveImage();
-    if (TickerMode.of(context)) {
+    if (TickerMode.valuesOf(context).enabled) {
       _listenToStream();
     } else {
       _stopListeningToStream();
@@ -64,8 +64,9 @@ class _PageFlipImageState extends State<PageFlipImage> {
   }
 
   void _resolveImage() {
-    final ImageStream newStream =
-        widget.image!.resolve(createLocalImageConfiguration(context));
+    final ImageStream newStream = widget.image!.resolve(
+      createLocalImageConfiguration(context),
+    );
     _updateSourceStream(newStream);
   }
 

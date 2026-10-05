@@ -6,20 +6,21 @@ import 'builders/builder.dart';
 
 //ignore: must_be_immutable
 class PageFlipWidget extends StatefulWidget {
-  PageFlipWidget(
-      {Key? key,
-      this.duration = const Duration(milliseconds: 450),
-      this.cutoffForward = 0.8,
-      this.cutoffPrevious = 0.1,
-      this.backgroundColor = Colors.white,
-      required this.children,
-      this.initialIndex = 0,
-      this.lastPage,
-      this.isRightSwipe = false,
-      required this.onPageFlip})
-      : assert(initialIndex < children.length,
-            'initialIndex cannot be greater than children length'),
-        super(key: key);
+  PageFlipWidget({
+    super.key,
+    this.duration = const Duration(milliseconds: 450),
+    this.cutoffForward = 0.8,
+    this.cutoffPrevious = 0.1,
+    this.backgroundColor = Colors.white,
+    required this.children,
+    this.initialIndex = 0,
+    this.lastPage,
+    this.isRightSwipe = false,
+    required this.onPageFlip,
+  }) : assert(
+         initialIndex < children.length,
+         'initialIndex cannot be greater than children length',
+       );
 
   final Color backgroundColor;
   final List<Widget> children;
@@ -29,6 +30,7 @@ class PageFlipWidget extends StatefulWidget {
   final double cutoffForward;
   final double cutoffPrevious;
   final bool isRightSwipe;
+
   /// Called on page flip. [pageIndex] is the new page, [isForward] is swipe direction.
   Function(int pageIndex, {bool? isForward}) onPageFlip;
 
@@ -265,9 +267,7 @@ class PageFlipWidgetState extends State<PageFlipWidget>
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            if (widget.lastPage != null) ...[
-              widget.lastPage!,
-            ],
+            if (widget.lastPage != null) ...[widget.lastPage!],
             if (pages.isNotEmpty) ...pages else ...[const SizedBox.shrink()],
           ],
         ),
