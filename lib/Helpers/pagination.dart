@@ -9,6 +9,7 @@ import 'package:cosmos_epub/Helpers/functions.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Soft hyphen — Flutter's native Text/RichText breaks lines here.
@@ -17,15 +18,30 @@ const _shyChar = '\u00AD';
 const _vowels = 'aeiouyAEIOUYаеёиоуыэюяАЕЁИОУЫЭЮЯ';
 
 // Uzbek digraphs that must never be split
-const _uzDigraphs = ['ch', 'sh', "g'", "o'", "gʻ", "oʻ",
-                      'Ch', 'Sh', "G'", "O'", "Gʻ", "Oʻ",
-                      'CH', 'SH'];
+const _uzDigraphs = [
+  'ch',
+  'sh',
+  "g'",
+  "o'",
+  "gʻ",
+  "oʻ",
+  'Ch',
+  'Sh',
+  "G'",
+  "O'",
+  "Gʻ",
+  "Oʻ",
+  'CH',
+  'SH',
+];
 
 bool _isVowel(String c) => _vowels.contains(c);
+
 /// Get the length of digraph starting at position i, or 1 if not a digraph.
 int _charLen(String word, int i) {
   for (final dg in _uzDigraphs) {
-    if (i + dg.length <= word.length && word.substring(i, i + dg.length) == dg) {
+    if (i + dg.length <= word.length &&
+        word.substring(i, i + dg.length) == dg) {
       return dg.length;
     }
   }
@@ -84,18 +100,15 @@ String _hyphenateWord(String word) {
 
 /// Inserts soft hyphens into text content between HTML tags.
 String _hyphenateHtml(String html) {
-  return html.replaceAllMapped(
-    RegExp(r'>([^<]+)<'),
-    (match) {
-      final text = match.group(1)!;
-      if (text.trim().isEmpty) return match.group(0)!;
-      final hyphenated = text.replaceAllMapped(
-        RegExp(r"[a-zA-Zа-яА-Яʻ']{5,}"),
-        (m) => _hyphenateWord(m.group(0)!),
-      );
-      return '>$hyphenated<';
-    },
-  );
+  return html.replaceAllMapped(RegExp(r'>([^<]+)<'), (match) {
+    final text = match.group(1)!;
+    if (text.trim().isEmpty) return match.group(0)!;
+    final hyphenated = text.replaceAllMapped(
+      RegExp(r"[a-zA-Zа-яА-Яʻ']{5,}"),
+      (m) => _hyphenateWord(m.group(0)!),
+    );
+    return '>$hyphenated<';
+  });
 }
 
 class PagingTextHandler {
@@ -132,10 +145,7 @@ class PagingWidget extends StatefulWidget {
     this.rawFontFamily = 'Segoe',
     this.accentColor = Colors.indigoAccent,
     this.backgroundColor = Colors.white,
-    this.style = const TextStyle(
-      color: Colors.black,
-      fontSize: 30,
-    ),
+    this.style = const TextStyle(color: Colors.black, fontSize: 30),
     required this.handlerCallback(PagingTextHandler handler),
     required this.onTextTap,
     required this.onPageFlip,
@@ -148,14 +158,14 @@ class PagingWidget extends StatefulWidget {
   });
 
   @override
-  _PagingWidgetState createState() => _PagingWidgetState();
+  State<PagingWidget> createState() => _PagingWidgetState();
 }
 
 class _PagingWidgetState extends State<PagingWidget> {
   List<String> _pageHtmls = [];
   List<Widget> pages = [];
   int _currentPageIndex = 0;
-  Future<void> paginateFuture = Future.value(true);
+  Future<void> paginateFuture = Future.value();
   late RenderBox _initializedRenderBox;
 
   final _pageKey = GlobalKey();
@@ -169,7 +179,7 @@ class _PagingWidgetState extends State<PagingWidget> {
     super.initState();
   }
 
-  rePaginate() {
+  void rePaginate() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() {
@@ -223,65 +233,69 @@ class _PagingWidgetState extends State<PagingWidget> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-        future: paginateFuture,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              {
-                return Center(
-                    child: CupertinoActivityIndicator(
+      future: paginateFuture,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            {
+              return Center(
+                child: CupertinoActivityIndicator(
                   color: Theme.of(context).primaryColor,
                   radius: 30.r,
-                ));
+                ),
+              );
+            }
+          default:
+            {
+              if (pages.isEmpty) {
+                return const Center(child: Text('No content'));
               }
-            default:
-              {
-                if (pages.isEmpty) {
-                  return const Center(child: Text('No content'));
-                }
-                return Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: SizedBox.expand(
-                            key: _pageKey,
-                            child: PageFlipWidget(
-                              key: _pageController,
-                              initialIndex: widget.starterPageIndex != 0
-                                  ? (pages.isNotEmpty &&
+              return Stack(
+                children: [
+                  Column(
+                    children: [
+                      Expanded(
+                        child: SizedBox.expand(
+                          key: _pageKey,
+                          child: PageFlipWidget(
+                            key: _pageController,
+                            initialIndex: widget.starterPageIndex != 0
+                                ? (pages.isNotEmpty &&
                                           widget.starterPageIndex < pages.length
                                       ? widget.starterPageIndex
                                       : 0)
-                                  : widget.starterPageIndex,
-                              onPageFlip: (pageIndex, {bool? isForward}) {
-                                _currentPageIndex = pageIndex;
-                                widget.onPageFlip(pageIndex, pages.length);
-                                // Forward on last page → onLastPage
-                                if (isForward == true &&
-                                    _currentPageIndex == pages.length - 1) {
-                                  widget.onLastPage(pageIndex, pages.length);
-                                }
-                                // Backward on first page → onFirstPage
-                                if (isForward == false &&
-                                    _currentPageIndex == 0) {
-                                  widget.onFirstPageBack
-                                      ?.call(pageIndex, pages.length);
-                                }
-                              },
-                              backgroundColor: widget.backgroundColor,
-                              lastPage: widget.lastWidget,
-                              children: pages,
-                            ),
+                                : widget.starterPageIndex,
+                            onPageFlip: (pageIndex, {bool? isForward}) {
+                              _currentPageIndex = pageIndex;
+                              widget.onPageFlip(pageIndex, pages.length);
+                              // Forward on last page → onLastPage
+                              if (isForward == true &&
+                                  _currentPageIndex == pages.length - 1) {
+                                widget.onLastPage(pageIndex, pages.length);
+                              }
+                              // Backward on first page → onFirstPage
+                              if (isForward == false &&
+                                  _currentPageIndex == 0) {
+                                widget.onFirstPageBack?.call(
+                                  pageIndex,
+                                  pages.length,
+                                );
+                              }
+                            },
+                            backgroundColor: widget.backgroundColor,
+                            lastPage: widget.lastWidget,
+                            children: pages,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                );
-              }
-          }
-        });
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
+        }
+      },
+    );
   }
 }
 
@@ -320,7 +334,6 @@ class _HighlightablePageState extends State<_HighlightablePage> {
   int _tappedParagraphEnd = -1;
   HtmlTextBuilder? _lastBuilder;
 
-
   List<Widget> _buildContent() {
     // Build once to get the page key from accumulated block text
     final tempBuilder = HtmlTextBuilder(
@@ -332,12 +345,17 @@ class _HighlightablePageState extends State<_HighlightablePage> {
       onTextTap: widget.onTextTap,
     );
     tempBuilder.build(widget.pageHtml);
-    final pageKey = HighlightModel.makeParagraphKey(tempBuilder.lastBuiltCleanText);
+    final pageKey = HighlightModel.makeParagraphKey(
+      tempBuilder.lastBuiltCleanText,
+    );
 
     // Now build with highlights loaded using that key
     final pageHighlights = widget.bookId.isNotEmpty
         ? HighlightStorage.getParagraphHighlights(
-            widget.bookId, widget.chapterIndex, pageKey)
+            widget.bookId,
+            widget.chapterIndex,
+            pageKey,
+          )
         : <HighlightModel>[];
 
     _lastBuilder = HtmlTextBuilder(
@@ -378,10 +396,13 @@ class _HighlightablePageState extends State<_HighlightablePage> {
     // Search within the tapped paragraph first (accurate for duplicate words)
     final searchText = cleanSelected.replaceAll('-', '');
     final searchStart = _tappedParagraphEnd > 0 ? _tappedParagraphStart : 0;
-    final searchEnd = _tappedParagraphEnd > 0 ? _tappedParagraphEnd : builtText.length;
+    final searchEnd = _tappedParagraphEnd > 0
+        ? _tappedParagraphEnd
+        : builtText.length;
     final paragraphText = builtText.substring(
-        searchStart.clamp(0, builtText.length),
-        searchEnd.clamp(0, builtText.length));
+      searchStart.clamp(0, builtText.length),
+      searchEnd.clamp(0, builtText.length),
+    );
 
     var localIdx = paragraphText.indexOf(searchText);
     var idx = localIdx != -1 ? searchStart + localIdx : -1;
@@ -400,7 +421,10 @@ class _HighlightablePageState extends State<_HighlightablePage> {
       int origPos = 0, normPos = 0;
       while (normPos < normalizedIdx && origPos < builtText.length) {
         if (RegExp(r'\s').hasMatch(builtText[origPos])) {
-          while (origPos < builtText.length && RegExp(r'\s').hasMatch(builtText[origPos])) origPos++;
+          while (origPos < builtText.length &&
+              RegExp(r'\s').hasMatch(builtText[origPos])) {
+            origPos++;
+          }
           normPos++;
         } else {
           origPos++;
@@ -459,8 +483,7 @@ class _HighlightablePageState extends State<_HighlightablePage> {
       onPointerDown: (e) => _tapDownPos = e.position,
       onPointerUp: (e) {
         // Only trigger on simple taps (not drags/selections)
-        if (_tapDownPos != null &&
-            (e.position - _tapDownPos!).distance < 5) {
+        if (_tapDownPos != null && (e.position - _tapDownPos!).distance < 5) {
           widget.onTextTap();
         }
         _tapDownPos = null;
@@ -473,12 +496,10 @@ class _HighlightablePageState extends State<_HighlightablePage> {
           return _PageToolbar(
             anchor: selectableRegionState.contextMenuAnchors,
             onCopy: () {
-              selectableRegionState
-                  .copySelection(SelectionChangedCause.toolbar);
+              Clipboard.setData(ClipboardData(text: _lastSelectedText));
             },
             onSelectAll: () {
-              selectableRegionState
-                  .selectAll(SelectionChangedCause.toolbar);
+              selectableRegionState.selectAll(SelectionChangedCause.toolbar);
             },
             onColorSelected: (color) {
               _addHighlight(_lastSelectedText, color);
@@ -495,7 +516,11 @@ class _HighlightablePageState extends State<_HighlightablePage> {
               physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: EdgeInsets.only(
-                    bottom: 40.h, top: 60.h, left: 20.w, right: 20.w),
+                  bottom: 40.h,
+                  top: 60.h,
+                  left: 20.w,
+                  right: 20.w,
+                ),
                 child: DefaultTextStyle(
                   style: widget.style.copyWith(height: 1.4),
                   child: Directionality(
@@ -539,19 +564,21 @@ class _PageToolbar extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ...highlightColors.map((color) => GestureDetector(
-                    onTap: () => onColorSelected(color),
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white54, width: 1.5),
-                      ),
+              ...highlightColors.map(
+                (color) => GestureDetector(
+                  onTap: () => onColorSelected(color),
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white54, width: 1.5),
                     ),
-                  )),
+                  ),
+                ),
+              ),
               Container(
                 width: 1,
                 height: 20,
@@ -569,7 +596,11 @@ class _PageToolbar extends StatelessWidget {
                 onTap: onSelectAll,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6),
-                  child: Icon(Icons.select_all, size: 20, color: Colors.white70),
+                  child: Icon(
+                    Icons.select_all,
+                    size: 20,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
             ],

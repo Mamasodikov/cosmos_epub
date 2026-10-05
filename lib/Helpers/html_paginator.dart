@@ -25,11 +25,11 @@ class HtmlPaginator {
   });
 
   TextStyle get _baseStyle => TextStyle(
-        fontSize: fontSize,
-        fontFamily: fontFamily,
-        package: fontPackage,
-        height: 1.4,
-      );
+    fontSize: fontSize,
+    fontFamily: fontFamily,
+    package: fontPackage,
+    height: 1.4,
+  );
 
   List<String> paginate(String htmlContent) {
     if (htmlContent.trim().isEmpty) return [''];
@@ -113,14 +113,20 @@ class HtmlPaginator {
   }
 
   void _buildSpans(
-      html_dom.Node node, List<InlineSpan> spans, TextStyle style) {
+    html_dom.Node node,
+    List<InlineSpan> spans,
+    TextStyle style,
+  ) {
     for (final child in node.nodes) {
       if (child is html_dom.Text) {
         final text = child.text;
         if (text.isNotEmpty) spans.add(TextSpan(text: text, style: style));
       } else if (child is html_dom.Element) {
         final tag = child.localName?.toLowerCase() ?? '';
-        if (tag == 'br') { spans.add(const TextSpan(text: '\n')); continue; }
+        if (tag == 'br') {
+          spans.add(const TextSpan(text: '\n'));
+          continue;
+        }
         if (tag == 'img') continue;
         _buildSpans(child, spans, _applyInlineTag(tag, style));
       }
@@ -129,37 +135,72 @@ class HtmlPaginator {
 
   TextStyle _applyInlineTag(String tag, TextStyle base) {
     switch (tag) {
-      case 'b' || 'strong': return base.copyWith(fontWeight: FontWeight.bold);
-      case 'i' || 'em' || 'cite': return base.copyWith(fontStyle: FontStyle.italic);
-      case 'u' || 'ins': return base.copyWith(decoration: TextDecoration.underline);
-      case 'code': return base.copyWith(fontFamily: 'monospace', package: null);
-      default: return base;
+      case 'b' || 'strong':
+        return base.copyWith(fontWeight: FontWeight.bold);
+      case 'i' || 'em' || 'cite':
+        return base.copyWith(fontStyle: FontStyle.italic);
+      case 'u' || 'ins':
+        return base.copyWith(decoration: TextDecoration.underline);
+      case 'code':
+        return base.copyWith(fontFamily: 'monospace', package: null);
+      default:
+        return base;
     }
   }
 
   TextStyle _styleForTag(String tag) {
     switch (tag) {
-      case 'h1': return _baseStyle.copyWith(fontSize: fontSize * 2.0, fontWeight: FontWeight.bold);
-      case 'h2': return _baseStyle.copyWith(fontSize: fontSize * 1.5, fontWeight: FontWeight.bold);
-      case 'h3': return _baseStyle.copyWith(fontSize: fontSize * 1.17, fontWeight: FontWeight.bold);
-      case 'h4': return _baseStyle.copyWith(fontWeight: FontWeight.bold);
-      case 'h5': return _baseStyle.copyWith(fontSize: fontSize * 0.83, fontWeight: FontWeight.bold);
-      case 'h6': return _baseStyle.copyWith(fontSize: fontSize * 0.67, fontWeight: FontWeight.bold);
-      case 'blockquote': return _baseStyle.copyWith(fontStyle: FontStyle.italic);
-      case 'pre' || 'code': return _baseStyle.copyWith(fontFamily: 'monospace', package: null);
-      default: return _baseStyle;
+      case 'h1':
+        return _baseStyle.copyWith(
+          fontSize: fontSize * 2.0,
+          fontWeight: FontWeight.bold,
+        );
+      case 'h2':
+        return _baseStyle.copyWith(
+          fontSize: fontSize * 1.5,
+          fontWeight: FontWeight.bold,
+        );
+      case 'h3':
+        return _baseStyle.copyWith(
+          fontSize: fontSize * 1.17,
+          fontWeight: FontWeight.bold,
+        );
+      case 'h4':
+        return _baseStyle.copyWith(fontWeight: FontWeight.bold);
+      case 'h5':
+        return _baseStyle.copyWith(
+          fontSize: fontSize * 0.83,
+          fontWeight: FontWeight.bold,
+        );
+      case 'h6':
+        return _baseStyle.copyWith(
+          fontSize: fontSize * 0.67,
+          fontWeight: FontWeight.bold,
+        );
+      case 'blockquote':
+        return _baseStyle.copyWith(fontStyle: FontStyle.italic);
+      case 'pre' || 'code':
+        return _baseStyle.copyWith(fontFamily: 'monospace', package: null);
+      default:
+        return _baseStyle;
     }
   }
 
   /// Vertical padding per tag — matches HtmlTextBuilder._paddingForTag
   double _paddingForTag(String tag) {
     switch (tag) {
-      case 'h1': return fontSize * 1.6;
-      case 'h2': return fontSize * 1.2;
-      case 'h3' || 'h4' || 'h5' || 'h6': return fontSize * 0.8;
-      case 'blockquote': return fontSize * 0.6 + fontSize;
-      case 'li': return fontSize * 0.2 + fontSize;
-      default: return fontSize * 0.6;
+      case 'h1':
+        return fontSize * 1.6;
+      case 'h2':
+        return fontSize * 1.2;
+      case 'h3' || 'h4' || 'h5' || 'h6':
+        return fontSize * 0.8;
+      case 'blockquote':
+        return fontSize * 0.6 + fontSize;
+      case 'li':
+        return fontSize * 0.2 + fontSize;
+      default:
+        return fontSize * 0.6;
     }
   }
 
@@ -171,17 +212,27 @@ class HtmlPaginator {
     for (final child in node.nodes) {
       if (child is html_dom.Element) {
         final tag = child.localName?.toLowerCase() ?? 'div';
-        if (const {'script', 'style', 'head', 'meta', 'link', 'title'}
-            .contains(tag)) continue;
+        if (const {
+          'script',
+          'style',
+          'head',
+          'meta',
+          'link',
+          'title',
+        }.contains(tag)) {
+          continue;
+        }
         if (_isContainerOnly(child)) {
           _collectBlocks(child, blocks);
         } else {
-          blocks.add(_HtmlBlock(
-            html: child.outerHtml,
-            text: child.text,
-            tag: tag,
-            element: child,
-          ));
+          blocks.add(
+            _HtmlBlock(
+              html: child.outerHtml,
+              text: child.text,
+              tag: tag,
+              element: child,
+            ),
+          );
         }
       } else if (child is html_dom.Text) {
         final text = child.text.trim();
@@ -195,12 +246,22 @@ class HtmlPaginator {
   bool _isContainerOnly(html_dom.Element element) {
     final tag = element.localName?.toLowerCase();
     if (const {
-      'body', 'html', 'section', 'article', 'main',
-      'aside', 'nav', 'header', 'footer'
-    }.contains(tag)) return true;
+      'body',
+      'html',
+      'section',
+      'article',
+      'main',
+      'aside',
+      'nav',
+      'header',
+      'footer',
+    }.contains(tag)) {
+      return true;
+    }
     if (tag == 'div' || tag == 'span') {
-      final hasDirectText = element.nodes
-          .any((n) => n is html_dom.Text && n.text.trim().isNotEmpty);
+      final hasDirectText = element.nodes.any(
+        (n) => n is html_dom.Text && n.text.trim().isNotEmpty,
+      );
       if (!hasDirectText && element.children.isNotEmpty) return true;
     }
     return false;
@@ -214,8 +275,12 @@ class HtmlPaginator {
     final widthAttr = target.attributes['width'];
     final heightAttr = target.attributes['height'];
     if (widthAttr != null && heightAttr != null) {
-      final imgW = double.tryParse(widthAttr.replaceAll(RegExp(r'[^0-9.]'), ''));
-      final imgH = double.tryParse(heightAttr.replaceAll(RegExp(r'[^0-9.]'), ''));
+      final imgW = double.tryParse(
+        widthAttr.replaceAll(RegExp(r'[^0-9.]'), ''),
+      );
+      final imgH = double.tryParse(
+        heightAttr.replaceAll(RegExp(r'[^0-9.]'), ''),
+      );
       if (imgW != null && imgW > 0 && imgH != null) {
         return (imgH * pageWidth / imgW).clamp(50.0, pageHeight * 0.8);
       }
@@ -230,9 +295,11 @@ class HtmlPaginator {
   static String _fixXhtml(String html) {
     html = html.replaceAllMapped(
       RegExp(
-          r'<(title|script|textarea|style|div|span|p|a|table|tbody|tr|td|th|ul|ol|li|h[1-6]|section|article|aside|header|footer|nav|main|blockquote|pre|code|em|strong|b|i|u|sub|sup|dd|dt|dl|figure|figcaption|details|summary)(\s[^>]*)?\s*/>',
-          caseSensitive: false),
-      (match) => '<${match.group(1)}${match.group(2) ?? ''}></${match.group(1)}>',
+        r'<(title|script|textarea|style|div|span|p|a|table|tbody|tr|td|th|ul|ol|li|h[1-6]|section|article|aside|header|footer|nav|main|blockquote|pre|code|em|strong|b|i|u|sub|sup|dd|dt|dl|figure|figcaption|details|summary)(\s[^>]*)?\s*/>',
+        caseSensitive: false,
+      ),
+      (match) =>
+          '<${match.group(1)}${match.group(2) ?? ''}></${match.group(1)}>',
     );
     html = html.replaceAll(RegExp(r'<\?xml[^?]*\?>'), '');
     return html;

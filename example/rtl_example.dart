@@ -15,15 +15,12 @@ import 'package:cosmos_epub/cosmos_epub.dart';
 /// Usage example for Persian/Arabic EPUB files:
 
 class RTLEpubExample extends StatelessWidget {
-  const RTLEpubExample({Key? key}) : super(key: key);
+  const RTLEpubExample({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('RTL EPUB Example'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('RTL EPUB Example'), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +34,7 @@ class RTLEpubExample extends StatelessWidget {
                   context: context,
                   bookId: 'persian_book_1',
                   onPageFlip: (currentPage, totalPages) {
-                    print('Page: $currentPage of $totalPages');
+                    debugPrint('Page: $currentPage of $totalPages');
                   },
                 );
               },
@@ -54,7 +51,7 @@ class RTLEpubExample extends StatelessWidget {
                   context: context,
                   bookId: 'arabic_book_1',
                   onPageFlip: (currentPage, totalPages) {
-                    print('Page: $currentPage of $totalPages');
+                    debugPrint('Page: $currentPage of $totalPages');
                   },
                 );
               },
@@ -72,7 +69,7 @@ class RTLEpubExample extends StatelessWidget {
                   context: context,
                   bookId: 'mixed_book_1',
                   onPageFlip: (currentPage, totalPages) {
-                    print('Page: $currentPage of $totalPages');
+                    debugPrint('Page: $currentPage of $totalPages');
                   },
                 );
               },

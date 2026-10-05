@@ -11,13 +11,13 @@ ValueNotifier<int> currentPageIndex = ValueNotifier(0);
 
 class PageFlipBuilder extends StatefulWidget {
   const PageFlipBuilder({
-    Key? key,
+    super.key,
     required this.amount,
     this.backgroundColor,
     required this.child,
     required this.pageIndex,
     required this.isRightSwipe,
-  }) : super(key: key);
+  });
 
   final Animation<double> amount;
   final int pageIndex;
@@ -37,15 +37,16 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
     await Future.delayed(const Duration(milliseconds: 100));
     try {
       if (mounted) {
-        final boundary = _boundaryKey.currentContext!.findRenderObject()!
-            as RenderRepaintBoundary;
+        final boundary =
+            _boundaryKey.currentContext!.findRenderObject()!
+                as RenderRepaintBoundary;
         final image = await boundary.toImage();
         setState(() {
           imageData[index] = image.clone();
         });
       }
     } catch (e) {
-      print('Ignore this error: $e');
+      debugPrint('Ignore this error: $e');
     }
   }
 
@@ -74,10 +75,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
               (widget.pageIndex == (currentPageIndex.value + 1))) {
             return ColoredBox(
               color: widget.backgroundColor ?? Colors.black12,
-              child: RepaintBoundary(
-                key: _boundaryKey,
-                child: widget.child,
-              ),
+              child: RepaintBoundary(key: _boundaryKey, child: widget.child),
             );
           } else {
             return Container();

@@ -1,5 +1,3 @@
-/// All functions
-
 import 'package:flutter/material.dart';
 
 /// Utility class for RTL (Right-to-Left) language support
